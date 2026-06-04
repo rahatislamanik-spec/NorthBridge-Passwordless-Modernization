@@ -1,2 +1,187 @@
-# NorthBridge-Passwordless-Modernization
-Microsoft Entra ID passwordless authentication design record for a regulated Canadian financial institution — Windows Hello for Business, FIDO2, Microsoft Authenticator, TAP, and Conditional Access.
+# NorthBridge Financial Group — Passwordless Authentication Modernization
+
+**Microsoft Entra ID | Windows Hello for Business | FIDO2 | Authenticator | TAP | Conditional Access**
+
+---
+
+> *"Passwords are the most exploited credential vector in financial services.  
+> This project eliminates them — without breaking operations."*
+
+---
+
+## Project Overview
+
+NorthBridge Financial Group is a federally regulated Canadian financial institution operating under OSFI guidelines, with **40,000+ employees**, **1,100+ branches**, and a hybrid workforce spanning corporate offices, branch counters, and remote knowledge workers.
+
+Following a password-spray incident that compromised 14 branch accounts in Q3 2024, the Identity & Access Management team initiated a phased passwordless authentication modernization program under the direction of the Chief Information Security Officer.
+
+This repository is the **official design record** for that program. It documents the architecture decisions, Conditional Access policies, authentication method configurations, pilot execution plan, rollout sequencing, help desk procedures, and exception handling model used to transition **40,000 workforce users** from password-based authentication to phishing-resistant sign-in across Windows workstations, iOS devices, and shared branch terminals.
+
+---
+
+## Why Passwordless — The Business Case
+
+| Driver | Detail |
+|---|---|
+| **Regulatory pressure** | OSFI B-13 Technology and Cyber Risk Guideline requires phishing-resistant MFA for privileged and high-risk access |
+| **Incident response** | Q3 2024 password-spray attack — 14 accounts compromised, 6-hour containment, $340K estimated response cost |
+| **Zero Trust alignment** | NorthBridge Zero Trust roadmap requires device-bound, phishing-resistant credentials by Q4 2025 |
+| **User experience** | 2,200 help desk tickets per quarter are password-related (resets, lockouts, expired credentials) |
+| **Operational cost** | Password reset tickets cost an estimated $18-$22 per ticket — $40K-$48K per quarter in support overhead |
+
+---
+
+## Connection to AD Identity Operations Toolkit
+
+This project is the direct continuation of the **[AD-Identity-Operations-Toolkit](https://github.com/rahatislamanik-spec/AD-Identity-Operations-Toolkit)**.
+
+Phase 0 of this program consumed the user account audit output from that toolkit to:
+- Identify stale and orphaned accounts ineligible for passwordless enrollment
+- Baseline authentication method registration across the tenant
+- Flag shared accounts and service accounts requiring exception handling
+- Confirm hybrid identity sync health before Entra ID method rollout
+
+The AD toolkit established the identity foundation. This project builds the authentication layer on top of it.
+
+---
+
+## Authentication Method Coverage
+
+| Method | Use Case | Device Type | Phishing-Resistant | Phase |
+|---|---|---|---|---|
+| **Windows Hello for Business** | Primary sign-in for corporate Windows devices | Managed Windows 10/11 | Yes | Phase 1-2 |
+| **FIDO2 Security Keys** | Shared workstations, branch terminals, privileged access | Any | Yes | Phase 2-3 |
+| **Microsoft Authenticator Passwordless** | Remote and mobile workers | iOS / Android | Yes | Phase 1-2 |
+| **Temporary Access Pass (TAP)** | Onboarding, device replacement, recovery | Any | Time-limited | Ongoing |
+| **Certificate-based Auth (CBA)** | Executive and high-privilege accounts | Managed devices | Yes | Phase 2 |
+
+---
+
+## Repository Structure
+
+    NorthBridge-Passwordless-Modernization/
+    |
+    +-- 00-project-overview/
+    |   +-- business-problem.md
+    |   +-- current-state-assessment.md
+    |   +-- target-state-architecture.md
+    |
+    +-- 01-authentication-methods/
+    |   +-- windows-hello-for-business.md
+    |   +-- fido2-passkeys.md
+    |   +-- microsoft-authenticator-passwordless.md
+    |   +-- temporary-access-pass.md
+    |
+    +-- 02-conditional-access/
+    |   +-- authentication-strength-policy.md
+    |   +-- ca-policy-matrix.md
+    |   +-- named-locations-trusted-networks.md
+    |
+    +-- 03-pilot-design/
+    |   +-- pilot-scope-and-criteria.md
+    |   +-- pilot-cohort-selection.md
+    |   +-- pilot-success-metrics.md
+    |
+    +-- 04-rollout-phases/
+    |   +-- phase-1-it-and-champions.md
+    |   +-- phase-2-knowledge-workers.md
+    |   +-- phase-3-branch-and-shared-devices.md
+    |   +-- phase-4-legacy-exception-remediation.md
+    |
+    +-- 05-support-model/
+    |   +-- help-desk-procedures.md
+    |   +-- tap-issuance-workflow.md
+    |   +-- recovery-scenarios.md
+    |
+    +-- 06-exception-handling/
+    |   +-- exception-policy.md
+    |   +-- legacy-authentication-controls.md
+    |
+    +-- scripts/
+        +-- Get-PasswordlessReadiness.ps1
+        +-- New-TAPForUser.ps1
+        +-- Audit-AuthMethodRegistration.ps1
+
+---
+
+## Rollout Summary
+
+| Phase | Cohort | Size | Timeline | Gate |
+|---|---|---|---|---|
+| **Phase 1** | IT staff + identity champions | ~150 users | Weeks 1-4 | 95% WHfB registration, zero critical incidents |
+| **Phase 2** | Corporate knowledge workers | ~12,000 users | Weeks 5-12 | <2% help desk escalation rate |
+| **Phase 3** | Branch staff + shared devices | ~25,000 users | Weeks 13-24 | FIDO2 key deployed to all shared terminals |
+| **Phase 4** | Legacy exception remediation | ~2,850 users | Weeks 25-32 | Exception register closed or approved |
+
+---
+
+## Key Design Decisions
+
+**1. Cloud Kerberos Trust for Windows Hello for Business**
+NorthBridge selected cloud Kerberos trust over hybrid key trust because it eliminates the need for a PKI infrastructure for WHfB and supports modern hybrid-joined devices. Requires Azure AD Kerberos deployed to each AD site.
+
+**2. Authentication Strength over MFA claims**
+Conditional Access policies enforce named Authentication Strength policies rather than generic MFA requirements. This ensures phishing-resistant methods are explicitly required for high-risk applications — not just any second factor.
+
+**3. FIDO2 for branch and shared workstations**
+Windows Hello for Business is not viable on shared terminals where multiple employees sign in on the same device. FIDO2 hardware keys (YubiKey 5 NFC) are the designated method for all shared workstation scenarios.
+
+**4. TAP as a bridge credential only**
+Temporary Access Pass is enabled exclusively for onboarding and recovery scenarios. TAP policies enforce single-use, 4-hour maximum lifetime, and require a service desk ticket number in the issuance notes field. TAP cannot be used to access high-risk applications.
+
+**5. Phased CA enforcement — report-only before block**
+Every new Conditional Access policy targeting authentication strength runs in report-only mode for a minimum of 14 days before switching to enforcement. Sign-in logs are reviewed daily during report-only windows.
+
+---
+
+## Scripts
+
+| Script | Purpose | Output |
+|---|---|---|
+| Get-PasswordlessReadiness.ps1 | Audits all users for authentication method registration status | CSV + console summary |
+| New-TAPForUser.ps1 | Generates a compliant TAP for a specified user with audit logging | TAP credential + log entry |
+| Audit-AuthMethodRegistration.ps1 | Reports on WHfB, FIDO2, and Authenticator registration coverage | HTML report |
+
+---
+
+## Related Repositories
+
+| Repository | Description |
+|---|---|
+| [AD-Identity-Operations-Toolkit](https://github.com/rahatislamanik-spec/AD-Identity-Operations-Toolkit) | On-premises Active Directory audit and operations scripts — the identity foundation for this project |
+| [Enterprise-IT-Security-Operations-Toolkit](https://github.com/rahatislamanik-spec/Enterprise-IT-Security-Operations-Toolkit) | 7-phase M365 security operations toolkit covering Exchange, Entra ID, and Defender |
+| [Meridian-Institute-M365-Lab](https://github.com/rahatislamanik-spec/Meridian-Institute-M365-Lab) | End-to-end M365 tenant build with Defender XDR, Secure Score improvement, and CA policy design |
+
+---
+
+## Environment Context
+
+| Component | Detail |
+|---|---|
+| **Identity platform** | Microsoft Entra ID (hybrid — Entra Connect sync from on-prem AD) |
+| **Device management** | Microsoft Intune — all corporate devices Entra hybrid joined |
+| **MFA baseline** | Microsoft Authenticator (push) — 78% registered at program start |
+| **Passwordless baseline** | 4% of users had any passwordless method registered at program start |
+| **Tenant size** | 40,000 users, 1,100+ branch locations |
+| **Compliance framework** | OSFI B-13, PCI-DSS v4.0, NIST SP 800-63B |
+
+---
+
+## Status
+
+| Component | Status |
+|---|---|
+| Project overview and business case | Complete |
+| Authentication method design | In Progress |
+| Conditional Access policy design | In Progress |
+| Pilot design | In Progress |
+| Rollout phase documentation | In Progress |
+| Support model and procedures | In Progress |
+| PowerShell scripts | In Progress |
+
+---
+
+*NorthBridge Financial Group is a fictional Canadian financial institution created for portfolio demonstration purposes.  
+All architecture decisions, policies, and procedures reflect real enterprise identity engineering practices.*
+
+*Built by [Md Rahat Islam Anik](https://linkedin.com/in/rahatislamanik) · [IT Portfolio](https://rahatislamanik-spec.github.io/IT-Portfolio-Rahat-Islam-Anik)*
