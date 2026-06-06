@@ -20,8 +20,8 @@
 #   - Permissions: UserAuthenticationMethod.ReadWrite.All, User.Read.All
 #
 # USAGE:
-#   .\New-TAPForUser.ps1 -UserPrincipalName "jane.smith@northbridge.ca" -TicketNumber "INC0042891"
-#   .\New-TAPForUser.ps1 -UserPrincipalName "john.doe@northbridge.ca" -TicketNumber "INC0042901" -LifetimeMinutes 120
+#   .\New-TAPForUser.ps1 -UserPrincipalName "jane.smith@northbridge.example" -TicketNumber "INC0042891"
+#   .\New-TAPForUser.ps1 -UserPrincipalName "john.doe@northbridge.example" -TicketNumber "INC0042901" -LifetimeMinutes 120
 #
 # POLICY REFERENCE: NorthBridge TAP Policy - target-state-architecture.md Section 7
 # =============================================================================

@@ -46,7 +46,7 @@ Use when a user cannot sign in and has no registered passwordless method availab
 
 **Step 3 — Run issuance script**
 - Open PowerShell as Tier 2 operator
-- Run: `.\New-TAPForUser.ps1 -UserPrincipalName "upn@northbridge.ca" -TicketNumber "INC0042891"`
+- Run: `.\New-TAPForUser.ps1 -UserPrincipalName "upn@northbridge.example" -TicketNumber "INC0042891"`
 - Script will block issuance if user already has an active TAP
 
 **Step 4 — Deliver TAP securely**
@@ -149,10 +149,10 @@ Print and post at help desk workstations.
 | User registration page | aka.ms/mysecurityinfo | Share with user |
 | Check sign-in logs | Entra ID > Sign-in logs | Tier 2 |
 | Audit TAP issuance log | TAP_AuditLog_[date].csv on shared drive | Tier 2 |
-| Escalate to IAM | iam-team@northbridge.ca / Teams: IAM Operations | Tier 2 |
+| Escalate to IAM | iam-team@northbridge.example / Teams: IAM Operations | Tier 2 |
 
 ---
 
 *Document owner: Service Desk Lead — NorthBridge Financial Group*
-*IAM review contact: iam-team@northbridge.ca*
-*Related documents: tap-issuance-workflow.md | recovery-scenarios.md | exception-policy.md*
+*IAM review contact: iam-team@northbridge.example*
+*Related planned documents: tap-issuance-workflow.md | recovery-scenarios.md | exception-policy.md*
