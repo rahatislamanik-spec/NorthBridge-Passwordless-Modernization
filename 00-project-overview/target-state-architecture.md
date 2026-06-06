@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This document defines the target authentication architecture for NorthBridge Financial Group following completion of the Passwordless Authentication Modernization program. It describes the intended end state for all authentication methods, Conditional Access policies, device trust, and identity governance controls that together eliminate password dependency across the 40,000-user workforce.
+This document defines the target authentication architecture for the NorthBridge Passwordless Authentication Modernization case study. It describes the intended end state for authentication methods, Conditional Access policies, device trust, and identity governance controls that reduce password dependency across a 40,000-user workforce.
 
 ---
 
@@ -18,7 +18,7 @@ This document defines the target authentication architecture for NorthBridge Fin
 |---|---|
 | **Phishing-resistant by default** | No authentication flow relies on a credential that can be captured and replayed |
 | **Device-bound credentials** | Primary authentication is tied to a specific trusted device — not a portable secret |
-| **Zero standing password access** | Passwords are disabled as a usable credential for all in-scope workforce accounts |
+| **Reduced standing password access** | Password use is minimized for in-scope workforce accounts and excluded from high-risk access paths |
 | **Operationally supportable** | Every method has a documented recovery path that help desk can execute without exceptions |
 
 ---
@@ -101,7 +101,7 @@ This document defines the target authentication architecture for NorthBridge Fin
 | CA-003: Require passwordless — all workforce | All users | All cloud apps | NB-Strength-Passwordless |
 | CA-004: Block legacy authentication | All users | All apps | Block |
 | CA-005: Require compliant device — corporate apps | All users | M365 apps | Compliant or hybrid joined device |
-| CA-006: TAP — restrict high-risk app access | TAP users | High-risk apps | Block |
+| CA-006: High-risk app protection | All users | High-risk apps | Require phishing-resistant authentication strength |
 | CA-007: Sign-in risk — block high risk | All users | Any | Block if sign-in risk = High |
 | CA-008: User risk — require password change | All users | Any | Require secure password change if user risk = High |
 
@@ -158,7 +158,7 @@ TAP is a time-limited passcode used exclusively as a bridge credential for onboa
 |---|---|---|
 | TAP lifetime | 4 hours maximum | Minimizes exposure window |
 | TAP usage | Single-use only | Prevents reuse after initial registration |
-| TAP scope | Cannot access high-risk applications | CA-006 blocks TAP from core banking, treasury, admin portals |
+| TAP scope | Not accepted for high-risk applications | High-risk applications require phishing-resistant authentication strength |
 | TAP issuance authority | Help desk Tier 2 and above | Prevents social engineering at Tier 1 |
 | TAP issuance requirement | Valid ServiceNow ticket number required | Audit trail for every TAP issued |
 | TAP logging | All issuance events logged to SIEM | Anomaly detection on TAP volume spikes |
@@ -186,7 +186,7 @@ TAP is a time-limited passcode used exclusively as a bridge credential for onboa
 | CA policies enforcing auth strength | 0 | 8 active policies |
 | Shared workstation auth | Password only | FIDO2 hardware key |
 | TAP policy | Not configured | Single-use, 4-hour, ticket-gated |
-| Password-only accounts | 8,800 | 0 |
+| Password-only accounts | 8,800 | 0 for in-scope workforce users after rollout |
 | Help desk password tickets | 2,200/quarter | under 440/quarter |
 | OSFI AAL compliance | AAL1 majority | AAL2 minimum, AAL3 for privileged |
 

@@ -8,9 +8,9 @@
 
 ## Executive Summary
 
-This document defines the Authentication Strength policy architecture deployed in Microsoft Entra ID as part of the NorthBridge Passwordless Authentication Modernization program. Authentication Strength policies replace generic MFA requirements in Conditional Access by explicitly naming which authentication methods are acceptable for a given access scenario.
+This document defines the proposed Authentication Strength policy architecture for the NorthBridge Passwordless Authentication Modernization case study. Authentication Strength policies replace generic MFA requirements in Conditional Access by explicitly naming which authentication methods are acceptable for a given access scenario.
 
-This approach ensures that phishing-resistant methods are enforced by policy — not assumed by MFA claim — and provides a durable, auditable control that satisfies OSFI B-13 and PCI-DSS v4.0 requirements for high-assurance authentication.
+This approach is intended to ensure that phishing-resistant methods are enforced by policy, not assumed by MFA claim, and provides a durable, auditable control model for high-assurance authentication.
 
 ---
 
@@ -33,7 +33,7 @@ Authentication Strength policies solve this by:
 
 ## 2. NorthBridge Authentication Strength Policies
 
-Three custom Authentication Strength policies are defined for NorthBridge. All three are created in Entra ID under Protection > Authentication Methods > Authentication Strengths.
+Three custom Authentication Strength policies are defined for NorthBridge. In a live tenant, these would be created in Entra ID under Protection > Authentication Methods > Authentication Strengths.
 
 ---
 
@@ -183,16 +183,18 @@ Three custom Authentication Strength policies are defined for NorthBridge. All t
 
 ---
 
-### CA-006: Restrict TAP — Block High-Risk Applications
+### CA-006: Restrict TAP — High-Risk Application Protection
 
 | Parameter | Value |
 |---|---|
-| Policy name | CA-006-NB-TAP-BlockHighRiskApps |
+| Policy name | CA-006-NB-RequirePhishingResistant-HighRiskApps |
 | Users | All users |
 | Cloud apps | Core Banking System, Treasury Management, Azure Portal, Entra Admin Center |
-| Conditions | Authentication context: TAP sign-in (enforced via named authentication context) |
-| Grant control | Block |
-| State | Enabled from Day 1 — no report-only period |
+| Conditions | Any platform, any location |
+| Grant control | Require authentication strength: NB-Strength-PhishingResistant |
+| State | Report-only first, then enabled after pilot validation |
+
+**TAP design note:** Temporary Access Pass is a recovery and onboarding method, not a standing access method for high-risk applications. This design prevents TAP from satisfying high-risk application access by requiring phishing-resistant authentication strength for those applications. TAP use should also be monitored in sign-in logs and reviewed through the service desk audit trail.
 
 ---
 
@@ -204,7 +206,7 @@ Every CA policy runs in report-only mode before enforcement. This is non-negotia
 |---|---|
 | Week 1 | Deploy CA-001, CA-002, CA-003, CA-004 in report-only mode |
 | Week 1-2 | Review sign-in logs daily — identify users who would be blocked |
-| Week 2 | Enable CA-006 (TAP restriction) — enforcement from day one, no report-only |
+| Week 2 | Validate TAP usage patterns and confirm high-risk applications require phishing-resistant methods |
 | Week 3 | Enable CA-004 (block legacy auth) if report-only log shows zero legitimate legacy auth |
 | Week 4 | Enable CA-001 (privileged roles) after IT pilot group confirms WHfB registered |
 | Week 5 | Enable CA-002 (high-risk apps) after Phase 1 registration confirmed |
@@ -244,4 +246,4 @@ If a user or application cannot satisfy an Authentication Strength policy at enf
 
 *Document owner: IAM Architecture Team — NorthBridge Financial Group*
 *Next review: Quarterly or following any policy enforcement incident*
-*Related documents: ca-policy-matrix.md | named-locations-trusted-networks.md | exception-policy.md*
+*Related planned documents: ca-policy-matrix.md | named-locations-trusted-networks.md | exception-policy.md*

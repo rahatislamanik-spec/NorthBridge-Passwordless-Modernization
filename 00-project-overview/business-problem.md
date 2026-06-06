@@ -136,7 +136,7 @@ The IAM team evaluated three options before recommending passwordless:
 |---|---|---|
 | **Option A:** Enforce MFA for all users | Make push MFA mandatory, block legacy auth | Insufficient — push MFA is vulnerable to phishing and AiTM |
 | **Option B:** Deploy phishing-resistant MFA only for privileged users | Scope to admins and high-risk roles | Insufficient — 96% of accounts remain exposed |
-| **Option C:** Phased passwordless rollout for all workforce | WHfB + FIDO2 + Authenticator passwordless, eliminate passwords as primary credential | Recommended — addresses full threat profile, meets OSFI AAL requirements |
+| **Option C:** Phased passwordless rollout for all workforce | WHfB + FIDO2 + Authenticator passwordless, reduce password use as a primary credential | Recommended — addresses full threat profile, meets OSFI AAL requirements |
 
 Option C was approved by the CISO in November 2024 with a 32-week rollout target.
 
