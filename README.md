@@ -5,17 +5,35 @@
 ---
 
 > *"Passwords are the most exploited credential vector in financial services.  
-> This project eliminates them — without breaking operations."*
+> This project documents a phased path to reduce password dependency without breaking operations."*
 
 ---
 
 ## Project Overview
 
-NorthBridge Financial Group is a federally regulated Canadian financial institution operating under OSFI guidelines, with **40,000+ employees**, **1,100+ branches**, and a hybrid workforce spanning corporate offices, branch counters, and remote knowledge workers.
+NorthBridge Financial Group is a fictional federally regulated Canadian financial institution operating under OSFI-style requirements, with **40,000+ employees**, **1,100+ branches**, and a hybrid workforce spanning corporate offices, branch counters, and remote knowledge workers.
 
-Following a password-spray incident that compromised 14 branch accounts in Q3 2024, the Identity & Access Management team initiated a phased passwordless authentication modernization program under the direction of the Chief Information Security Officer.
+Following a simulated password-spray incident that compromised 14 branch accounts in Q3 2024, the Identity & Access Management team initiated a phased passwordless authentication modernization program under the direction of the Chief Information Security Officer.
 
-This repository is the **official design record** for that program. It documents the architecture decisions, Conditional Access policies, authentication method configurations, pilot execution plan, rollout sequencing, help desk procedures, and exception handling model used to transition **40,000 workforce users** from password-based authentication to phishing-resistant sign-in across Windows workstations, iOS devices, and shared branch terminals.
+This repository is an **in-progress production-style architecture and rollout planning case study**. It documents the business problem, current-state assessment, target-state architecture, Conditional Access design, support model, and early automation drafts for moving a large workforce from password-based authentication toward phishing-resistant sign-in across Windows workstations, mobile users, and shared branch terminals.
+
+This is not presented as a completed tenant deployment. Implementation evidence, pilot results, screenshots, and final rollout artifacts are planned future additions.
+
+---
+
+## Current Evidence Status
+
+| Area | Current State |
+|---|---|
+| Business case and scenario | Documented |
+| Current-state identity assessment | Scenario-based baseline documented |
+| Target passwordless architecture | Documented |
+| Conditional Access authentication strength design | Drafted |
+| Help desk support procedure | Drafted |
+| PowerShell automation | Two draft scripts included |
+| Tenant screenshots | Not included yet |
+| Pilot or production deployment evidence | Not included yet |
+| Physical device/FIDO2 rollout evidence | Not included yet |
 
 ---
 
@@ -66,41 +84,17 @@ The AD toolkit established the identity foundation. This project builds the auth
     |   +-- current-state-assessment.md
     |   +-- target-state-architecture.md
     |
-    +-- 01-authentication-methods/
-    |   +-- windows-hello-for-business.md
-    |   +-- fido2-passkeys.md
-    |   +-- microsoft-authenticator-passwordless.md
-    |   +-- temporary-access-pass.md
-    |
     +-- 02-conditional-access/
     |   +-- authentication-strength-policy.md
-    |   +-- ca-policy-matrix.md
-    |   +-- named-locations-trusted-networks.md
-    |
-    +-- 03-pilot-design/
-    |   +-- pilot-scope-and-criteria.md
-    |   +-- pilot-cohort-selection.md
-    |   +-- pilot-success-metrics.md
-    |
-    +-- 04-rollout-phases/
-    |   +-- phase-1-it-and-champions.md
-    |   +-- phase-2-knowledge-workers.md
-    |   +-- phase-3-branch-and-shared-devices.md
-    |   +-- phase-4-legacy-exception-remediation.md
     |
     +-- 05-support-model/
     |   +-- help-desk-procedures.md
-    |   +-- tap-issuance-workflow.md
-    |   +-- recovery-scenarios.md
-    |
-    +-- 06-exception-handling/
-    |   +-- exception-policy.md
-    |   +-- legacy-authentication-controls.md
     |
     +-- scripts/
         +-- Get-PasswordlessReadiness.ps1
         +-- New-TAPForUser.ps1
-        +-- Audit-AuthMethodRegistration.ps1
+
+Planned future sections include authentication method deep dives, pilot cohort design, rollout phase documentation, exception handling, and sanitized evidence artifacts.
 
 ---
 
@@ -138,9 +132,8 @@ Every new Conditional Access policy targeting authentication strength runs in re
 
 | Script | Purpose | Output |
 |---|---|---|
-| Get-PasswordlessReadiness.ps1 | Audits all users for authentication method registration status | CSV + console summary |
-| New-TAPForUser.ps1 | Generates a compliant TAP for a specified user with audit logging | TAP credential + log entry |
-| Audit-AuthMethodRegistration.ps1 | Reports on WHfB, FIDO2, and Authenticator registration coverage | HTML report |
+| Get-PasswordlessReadiness.ps1 | Draft script to audit users for authentication method registration status | CSV + console summary |
+| New-TAPForUser.ps1 | Draft script to generate a TAP for a specified user with audit logging | TAP credential + log entry |
 
 ---
 
@@ -172,12 +165,24 @@ Every new Conditional Access policy targeting authentication strength runs in re
 | Component | Status |
 |---|---|
 | Project overview and business case | Complete |
-| Authentication method design | In Progress |
-| Conditional Access policy design | In Progress |
-| Pilot design | In Progress |
-| Rollout phase documentation | In Progress |
-| Support model and procedures | In Progress |
-| PowerShell scripts | In Progress |
+| Current-state assessment | Complete |
+| Target-state architecture | Complete |
+| Conditional Access policy design | Drafted |
+| Support model and procedures | Drafted |
+| PowerShell scripts | Drafted |
+| Authentication method deep dives | Planned |
+| Pilot design | Planned |
+| Rollout phase documentation | Planned |
+| Exception handling model | Planned |
+
+---
+
+## Limitations
+
+- This is an in-progress portfolio case study, not a completed production rollout.
+- Baseline numbers, incidents, cost estimates, and organization names are scenario data created for documentation practice.
+- No tenant screenshots, pilot sign-in logs, device enrollment evidence, or production rollout results are included yet.
+- PowerShell scripts are draft operational examples and should be tested in a lab tenant before real use.
 
 ---
 
