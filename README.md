@@ -93,6 +93,9 @@ The AD toolkit established the identity foundation. This project builds the auth
     +-- 03-rollout-plan/
     |   +-- pilot-rollout-plan.md
     |
+    +-- 04-readiness-assessment/
+    |   +-- passwordless-readiness-assessment.md
+    |
     +-- 05-support-model/
     |   +-- help-desk-procedures.md
     |   +-- passwordless-support-workflow.md
@@ -130,6 +133,8 @@ These diagrams use planned success metrics and target-state workflow design rath
 Detailed planning artifact: [Passwordless Pilot Rollout Plan](03-rollout-plan/pilot-rollout-plan.md)
 
 Conditional Access artifact: [Passwordless Authentication Strength Policy](02-conditional-access/passwordless-authentication-strength-policy.md)
+
+Readiness artifact: [Passwordless Readiness Assessment](04-readiness-assessment/passwordless-readiness-assessment.md)
 
 Support artifact: [Passwordless Support Workflow](05-support-model/passwordless-support-workflow.md)
 
@@ -202,6 +207,7 @@ Every new Conditional Access policy targeting authentication strength runs in re
 | Target-state architecture | Complete |
 | Conditional Access policy design | Drafted |
 | Passwordless authentication strength policy | Documented |
+| Passwordless readiness assessment | Documented |
 | Pilot rollout plan | Documented |
 | Support model and procedures | Drafted |
 | Passwordless support workflow | Documented |
