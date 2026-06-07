@@ -100,14 +100,21 @@ Planned future sections include authentication method deep dives, pilot cohort d
 
 ---
 
-## Architecture Artifacts
+## Architecture & Authentication Flow
 
 The following HTML artifacts support the target-state architecture. They are planning and portfolio documentation artifacts, not evidence of a completed production deployment.
 
-| Artifact | Description |
-|---|---|
-| [Enterprise Passwordless Architecture Diagram](00-project-overview/northbridge-passwordless-architecture.html) | Visualizes the target Microsoft Entra ID passwordless architecture across users and devices, identity control plane, and workloads. |
-| [Enterprise Authentication Flow Diagram](00-project-overview/northbridge-authentication-flow.html) | Shows the target Zero Trust sign-in workflow using device context, Conditional Access, Identity Protection, passwordless authentication, and Entra ID token issuance. |
+![Enterprise Passwordless Architecture Diagram](00-project-overview/images/northbridge-passwordless-architecture.svg)
+
+Visualizes the target Microsoft Entra ID passwordless architecture across users and devices, identity control plane, and workloads.
+
+[View interactive HTML version](00-project-overview/northbridge-passwordless-architecture.html)
+
+![Enterprise Authentication Flow Diagram](00-project-overview/images/northbridge-authentication-flow.svg)
+
+Shows the target Zero Trust sign-in workflow using device context, Conditional Access, Identity Protection, passwordless authentication, and Entra ID token issuance.
+
+[View interactive HTML version](00-project-overview/northbridge-authentication-flow.html)
 
 These diagrams use planned success metrics and target-state workflow design rather than completed production results.
 
