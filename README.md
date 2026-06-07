@@ -89,6 +89,9 @@ The AD toolkit established the identity foundation. This project builds the auth
     +-- 02-conditional-access/
     |   +-- authentication-strength-policy.md
     |
+    +-- 03-rollout-plan/
+    |   +-- pilot-rollout-plan.md
+    |
     +-- 05-support-model/
     |   +-- help-desk-procedures.md
     |
@@ -96,7 +99,7 @@ The AD toolkit established the identity foundation. This project builds the auth
         +-- Get-PasswordlessReadiness.ps1
         +-- New-TAPForUser.ps1
 
-Planned future sections include authentication method deep dives, pilot cohort design, rollout phase documentation, exception handling, and sanitized evidence artifacts.
+Planned future sections include authentication method deep dives, exception handling, and sanitized evidence artifacts.
 
 ---
 
@@ -121,6 +124,8 @@ These diagrams use planned success metrics and target-state workflow design rath
 ---
 
 ## Rollout Summary
+
+Detailed planning artifact: [Passwordless Pilot Rollout Plan](03-rollout-plan/pilot-rollout-plan.md)
 
 | Phase | Cohort | Size | Timeline | Gate |
 |---|---|---|---|---|
@@ -190,11 +195,10 @@ Every new Conditional Access policy targeting authentication strength runs in re
 | Current-state assessment | Complete |
 | Target-state architecture | Complete |
 | Conditional Access policy design | Drafted |
+| Pilot rollout plan | Documented |
 | Support model and procedures | Drafted |
 | PowerShell scripts | Drafted |
 | Authentication method deep dives | Planned |
-| Pilot design | Planned |
-| Rollout phase documentation | Planned |
 | Exception handling model | Planned |
 
 ---
