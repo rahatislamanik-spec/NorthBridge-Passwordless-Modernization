@@ -84,6 +84,7 @@ The AD toolkit established the identity foundation. This project builds the auth
     |   +-- current-state-assessment.md
     |   +-- target-state-architecture.md
     |   +-- northbridge-passwordless-architecture.html
+    |   +-- northbridge-authentication-flow.html
     |
     +-- 02-conditional-access/
     |   +-- authentication-strength-policy.md
@@ -99,13 +100,16 @@ Planned future sections include authentication method deep dives, pilot cohort d
 
 ---
 
-## Architecture Diagram
+## Architecture Artifacts
 
-The target passwordless architecture is available as a standalone HTML diagram:
+The following HTML artifacts support the target-state architecture. They are planning and portfolio documentation artifacts, not evidence of a completed production deployment.
 
-[NorthBridge Passwordless Architecture](00-project-overview/northbridge-passwordless-architecture.html)
+| Artifact | Description |
+|---|---|
+| [Enterprise Passwordless Architecture Diagram](00-project-overview/northbridge-passwordless-architecture.html) | Visualizes the target Microsoft Entra ID passwordless architecture across users and devices, identity control plane, and workloads. |
+| [Enterprise Authentication Flow Diagram](00-project-overview/northbridge-authentication-flow.html) | Shows the target Zero Trust sign-in workflow using device context, Conditional Access, Identity Protection, passwordless authentication, and Entra ID token issuance. |
 
-The diagram is a visual companion to the target-state architecture document and uses planned success metrics rather than completed production results.
+These diagrams use planned success metrics and target-state workflow design rather than completed production results.
 
 ---
 

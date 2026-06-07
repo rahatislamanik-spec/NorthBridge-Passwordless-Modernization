@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NorthBridge Enterprise Authentication Flow</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 32px;
+            background: #edf7f4;
+            color: #162033;
+            font-family: "Segoe UI", Calibri, Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 36px;
+            background: #ffffff;
+            border: 1px solid #cfe2dc;
+            border-radius: 10px;
+            box-shadow: 0 16px 42px rgba(22, 32, 51, 0.12);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: #087568;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            color: #162033;
+            font-size: 30px;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            color: #53647c;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .disclaimer {
+            margin: 20px 0 0;
+            padding: 14px 16px;
+            background: #f7fbfa;
+            border: 1px solid #cfe2dc;
+            border-left: 4px solid #087568;
+            border-radius: 6px;
+            color: #36455c;
+            font-size: 14px;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .flow {
+            display: grid;
+            gap: 14px;
+        }
+
+        .flow-step {
+            display: grid;
+            justify-items: center;
+        }
+
+        .step-box {
+            width: min(100%, 760px);
+            padding: 18px 20px;
+            background: #ffffff;
+            border: 2px solid #6f8fc0;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(49, 92, 159, 0.12);
+            color: #162033;
+            font-weight: 700;
+            line-height: 1.35;
+            text-align: center;
+        }
+
+        .step-box small {
+            display: block;
+            margin-top: 5px;
+            color: #53647c;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .step-box.start-end {
+            max-width: 560px;
+            background: #087568;
+            border-color: #065d52;
+            border-radius: 999px;
+            color: #ffffff;
+        }
+
+        .step-box.start-end small {
+            color: #d8f0ec;
+        }
+
+        .step-box.process {
+            background: #f4f8fd;
+            border-color: #315c9f;
+        }
+
+        .step-box.decision {
+            max-width: 520px;
+            background: #fff9e8;
+            border-color: #d5a51d;
+        }
+
+        .step-box.block {
+            background: #fff5f4;
+            border-color: #d66a52;
+            color: #9d2e1f;
+        }
+
+        .step-box.success {
+            background: #f1fbf8;
+            border-color: #3d9987;
+            color: #0f6659;
+        }
+
+        .arrow-down {
+            width: 3px;
+            height: 24px;
+            margin: 0 auto;
+            background: #087568;
+            position: relative;
+        }
+
+        .arrow-down::after {
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 10px solid #087568;
+            content: "";
+            transform: translateX(-50%);
+        }
+
+        .decision-branch {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin: 2px 0 8px;
+        }
+
+        .risk-branch {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin: 2px 0 8px;
+        }
+
+        .branch-label {
+            margin-bottom: 6px;
+            color: #53647c;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0;
+            text-align: center;
+        }
+
+        .branch-label.yes {
+            color: #0f6659;
+        }
+
+        .branch-label.no {
+            color: #9d2e1f;
+        }
+
+        .branch-label.medium {
+            color: #9f6d00;
+        }
+
+        .continue-line {
+            height: 4px;
+            margin-top: 22px;
+            background: #3d9987;
+            border-radius: 999px;
+        }
+
+        .explanation-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f4f8fd;
+            border: 1px solid #b8c9e2;
+            border-radius: 8px;
+        }
+
+        .explanation-title {
+            margin-bottom: 12px;
+            color: #162033;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .explanation-text,
+        .path-info {
+            color: #36455c;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .path-info {
+            margin-top: 18px;
+            padding: 15px;
+            background: #ffffff;
+            border: 1px solid #d8e0ea;
+            border-radius: 6px;
+        }
+
+        .path-success {
+            color: #0f6659;
+            font-weight: 800;
+        }
+
+        .path-block {
+            color: #9d2e1f;
+            font-weight: 800;
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding: 18px;
+            }
+
+            .container {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .decision-branch,
+            .risk-branch {
+                grid-template-columns: 1fr;
+            }
+
+            .continue-line {
+                margin-top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <a class="back-link" href="target-state-architecture.md">Back to target-state architecture</a>
+
+        <header>
+            <h1>Enterprise Authentication Flow</h1>
+            <p class="subtitle">Zero Trust sign-in process with Conditional Access, Identity Protection, and passwordless authentication</p>
+            <p class="disclaimer">
+                This diagram represents a target-state enterprise architecture and authentication workflow for a fictional passwordless modernization initiative. It is intended for architectural planning and portfolio demonstration purposes.
+            </p>
+        </header>
+
+        <section class="flow" aria-label="Enterprise passwordless authentication flow">
+            <div class="flow-step">
+                <div class="step-box start-end">User Initiates Sign-In<small>Microsoft 365, Azure, or enterprise application</small></div>
+            </div>
+            <div class="arrow-down"></div>
+
+            <div class="flow-step">
+                <div class="step-box process">Device Trust and Compliance Signals Collected<small>Intune compliance, Entra join state, location, app, and session context</small></div>
+            </div>
+            <div class="arrow-down"></div>
+
+            <div class="flow-step">
+                <div class="step-box decision">Compliant or Trusted Device?</div>
+            </div>
+            <div class="decision-branch">
+                <div>
+                    <div class="branch-label no">NO</div>
+                    <div class="step-box block">Block, limit session, or require remediation<small>Policy action depends on application risk and rollout phase</small></div>
+                </div>
+                <div>
+                    <div class="branch-label yes">YES</div>
+                    <div class="continue-line" aria-label="Continue to Conditional Access evaluation"></div>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+            <div class="flow-step">
+                <div class="step-box process">Conditional Access Policy Evaluation<small>Zero Trust policy engine evaluates user, device, app, location, and authentication strength</small></div>
+            </div>
+            <div class="arrow-down"></div>
+
+            <div class="flow-step">
+                <div class="step-box decision">Policy Requirements Satisfied?</div>
+            </div>
+            <div class="decision-branch">
+                <div>
+                    <div class="branch-label no">NO</div>
+                    <div class="step-box block">Block or require stronger authentication<small>Example: phishing-resistant method for admin or high-risk apps</small></div>
+                </div>
+                <div>
+                    <div class="branch-label yes">YES</div>
+                    <div class="continue-line" aria-label="Continue to risk evaluation"></div>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+            <div class="flow-step">
+                <div class="step-box process">Identity Protection Risk Evaluation<small>Sign-in risk and user risk influence the access decision</small></div>
+            </div>
+            <div class="arrow-down"></div>
+
+            <div class="flow-step">
+                <div class="step-box decision">Risk Level Acceptable?</div>
+            </div>
+            <div class="risk-branch">
+                <div>
+                    <div class="branch-label no">HIGH</div>
+                    <div class="step-box block">Block or require security remediation<small>High-risk access is not allowed to proceed silently</small></div>
+                </div>
+                <div>
+                    <div class="branch-label medium">MEDIUM</div>
+                    <div class="step-box process">Require stronger authentication<small>Passwordless or phishing-resistant challenge based on policy</small></div>
+                </div>
+                <div>
+                    <div class="branch-label yes">LOW</div>
+                    <div class="continue-line" aria-label="Continue to passwordless authentication"></div>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+            <div class="flow-step">
+                <div class="step-box process">Passwordless Authentication<small>Windows Hello for Business / FIDO2 Security Keys</small></div>
+            </div>
+            <div class="arrow-down"></div>
+
+            <div class="flow-step">
+                <div class="step-box decision">Authentication Successful?</div>
+            </div>
+            <div class="decision-branch">
+                <div>
+                    <div class="branch-label no">NO</div>
+                    <div class="step-box block">Deny access and initiate recovery path<small>TAP, help desk validation, or account review as appropriate</small></div>
+                </div>
+                <div>
+                    <div class="branch-label yes">YES</div>
+                    <div class="continue-line" aria-label="Continue to token issuance"></div>
+                </div>
+            </div>
+
+            <div class="arrow-down"></div>
+            <div class="flow-step">
+                <div class="step-box process">Microsoft Entra ID Issues Access Token<small>Token contains evaluated claims and session controls for the target application</small></div>
+            </div>
+            <div class="arrow-down"></div>
+
+            <div class="flow-step">
+                <div class="step-box success">User Accesses Application<small>Microsoft 365, Azure resources, or integrated enterprise app</small></div>
+            </div>
+        </section>
+
+        <section class="explanation-box" aria-labelledby="reviewer-explanation">
+            <h2 class="explanation-title" id="reviewer-explanation">Reviewer Explanation</h2>
+            <p class="explanation-text">
+                This flow demonstrates a target Zero Trust sign-in path: device context, Conditional Access requirements, risk signals, and passwordless authentication are evaluated before Entra ID issues an access token. Conditional Access is shown as the policy engine, while Identity Protection supplies risk signals that can block, challenge, or route the user through remediation.
+            </p>
+            <div class="path-info">
+                <p><span class="path-success">Success path:</span> trusted device and context, CA requirements satisfied, acceptable risk, passwordless authentication succeeds, token issued, application access granted.</p>
+                <p><span class="path-block">Block or remediation path:</span> non-compliant device, failed policy, elevated risk, or failed authentication can block access, require stronger authentication, or route the user to recovery.</p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

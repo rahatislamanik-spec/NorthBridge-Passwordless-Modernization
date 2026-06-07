@@ -25,7 +25,9 @@ This document defines the target authentication architecture for the NorthBridge
 
 ## 2. Target Authentication Architecture
 
-Visual companion: [NorthBridge Passwordless Architecture](northbridge-passwordless-architecture.html)
+Visual companions:
+- [NorthBridge Passwordless Architecture](northbridge-passwordless-architecture.html)
+- [NorthBridge Authentication Flow](northbridge-authentication-flow.html)
 
 ### 2.1 Method Assignment by User Population
 
