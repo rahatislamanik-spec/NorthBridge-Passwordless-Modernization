@@ -108,13 +108,13 @@ The following HTML artifacts support the target-state architecture. They are pla
 
 Visualizes the target Microsoft Entra ID passwordless architecture across users and devices, identity control plane, and workloads.
 
-[View interactive HTML version](00-project-overview/northbridge-passwordless-architecture.html)
+[View interactive HTML version](https://rahatislamanik-spec.github.io/NorthBridge-Passwordless-Modernization/00-project-overview/northbridge-passwordless-architecture.html)
 
 ![Enterprise Authentication Flow Diagram](00-project-overview/images/northbridge-authentication-flow.svg)
 
 Shows the target Zero Trust sign-in workflow using device context, Conditional Access, Identity Protection, passwordless authentication, and Entra ID token issuance.
 
-[View interactive HTML version](00-project-overview/northbridge-authentication-flow.html)
+[View interactive HTML version](https://rahatislamanik-spec.github.io/NorthBridge-Passwordless-Modernization/00-project-overview/northbridge-authentication-flow.html)
 
 These diagrams use planned success metrics and target-state workflow design rather than completed production results.
 
