@@ -148,7 +148,7 @@ Visual companions:
 | YubiKey 5 NFC selected | Supports USB-A, USB-C, and NFC — compatible with all NorthBridge workstation types |
 | Two keys issued per shared workstation user | Primary worn on lanyard, backup stored in branch safe |
 | One key issued per privileged / admin user | IT admin, executive, break-glass accounts |
-| FIDO2 PIN complexity enforced via Entra ID | 8 character minimum |
+| FIDO2 user verification | PIN or biometric verification governed by approved security key and platform capabilities |
 | Key registration performed by IT at onboarding | Self-service not permitted for branch staff |
 | Lost key procedure | Report to help desk — disabled in Entra ID within 1 hour, TAP issued for recovery |
 

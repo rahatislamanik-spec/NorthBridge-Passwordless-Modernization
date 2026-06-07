@@ -27,9 +27,9 @@ NorthBridge Financial Group is a fictional federally regulated Canadian financia
 
 Following a simulated password-spray incident that compromised 14 branch accounts in Q3 2024, the Identity & Access Management team initiated a phased passwordless authentication modernization program under the direction of the Chief Information Security Officer.
 
-This repository is an **in-progress production-style architecture and rollout planning case study**. It documents the business problem, current-state assessment, target-state architecture, Conditional Access design, support model, and early automation drafts for moving a large workforce from password-based authentication toward phishing-resistant sign-in across Windows workstations, mobile users, and shared branch terminals.
+This repository is a **release-candidate production-style architecture and rollout planning case study**. It documents the business problem, current-state assessment, target-state architecture, Conditional Access design, support model, governance model, sanitized lab evidence, and early automation drafts for moving a large workforce from password-based authentication toward phishing-resistant sign-in across Windows workstations, mobile users, and shared branch terminals.
 
-This is not presented as a completed tenant deployment. Implementation evidence, pilot results, screenshots, and final rollout artifacts are planned future additions.
+This is not presented as a completed tenant deployment. Additional implementation evidence, pilot results, device enrollment screenshots, and final rollout artifacts are planned future additions.
 
 ---
 
