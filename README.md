@@ -31,7 +31,7 @@ This is not presented as a completed tenant deployment. Implementation evidence,
 | Conditional Access authentication strength design | Drafted |
 | Help desk support procedure | Drafted |
 | PowerShell automation | Two draft scripts included |
-| Tenant screenshots | Not included yet |
+| Sanitized lab screenshots | Included in evidence gallery |
 | Pilot or production deployment evidence | Not included yet |
 | Physical device/FIDO2 rollout evidence | Not included yet |
 
@@ -103,11 +103,19 @@ The AD toolkit established the identity foundation. This project builds the auth
     +-- 06-exception-management/
     |   +-- break-glass-access-model.md
     |
+    +-- evidence/
+    |   +-- authentication-methods-policy.png
+    |   +-- conditional-access-policies.png
+    |   +-- authentication-strengths-passwordless-mfa.png
+    |   +-- temporary-access-pass-settings.png
+    |   +-- passkey-fido2-settings.png
+    |   +-- sign-in-log-mfa-success.png
+    |
     +-- scripts/
         +-- Get-PasswordlessReadiness.ps1
         +-- New-TAPForUser.ps1
 
-Planned future sections include authentication method deep dives, exception handling, and sanitized evidence artifacts.
+Planned future sections include authentication method deep dives and sanitized evidence artifacts.
 
 ---
 
@@ -128,6 +136,48 @@ Shows the target Zero Trust sign-in workflow using device context, Conditional A
 [View interactive HTML version](https://rahatislamanik-spec.github.io/NorthBridge-Passwordless-Modernization/00-project-overview/northbridge-authentication-flow.html)
 
 These diagrams use planned success metrics and target-state workflow design rather than completed production results.
+
+---
+
+## Evidence Gallery
+
+The following screenshots come from a lab or simulated enterprise Microsoft Entra ID environment. Sensitive tenant labels, account identifiers, request IDs, correlation IDs, session IDs, object IDs, UPNs, and other uniquely identifying values are redacted. These screenshots demonstrate configuration concepts and validation points; they are not presented as proof of completed production deployment.
+
+### Authentication Methods Policy
+
+<img src="evidence/authentication-methods-policy.png" alt="Sanitized Microsoft Entra authentication methods policy screenshot" width="720">
+
+Shows configured Authentication Methods options in Microsoft Entra ID, including methods relevant to passwordless rollout planning. This is relevant because passwordless modernization depends on method availability and registration scope before rollout.
+
+### Conditional Access Policies
+
+<img src="evidence/conditional-access-policies.png" alt="Sanitized Conditional Access policies screenshot" width="720">
+
+Shows Conditional Access policies in a report-only style validation posture. This is relevant because passwordless and Authentication Strength policies should be evaluated in report-only mode before staged enforcement.
+
+### Authentication Strengths
+
+<img src="evidence/authentication-strengths-passwordless-mfa.png" alt="Sanitized Authentication Strengths passwordless MFA screenshot" width="720">
+
+Shows Authentication Strength configuration for passwordless and phishing-resistant access patterns. This is relevant because Authentication Strength policies define which methods satisfy Conditional Access requirements.
+
+### Temporary Access Pass Settings
+
+<img src="evidence/temporary-access-pass-settings.png" alt="Sanitized Temporary Access Pass settings screenshot" width="720">
+
+Shows Temporary Access Pass settings in Microsoft Entra ID. This is relevant because TAP is used as a controlled onboarding and recovery method during passwordless rollout, not as a standing sign-in method.
+
+### Passkey / FIDO2 Settings
+
+<img src="evidence/passkey-fido2-settings.png" alt="Sanitized Passkey FIDO2 settings screenshot" width="720">
+
+Shows Passkey (FIDO2) configuration settings. This is relevant because FIDO2 security keys support phishing-resistant access for privileged users, shared workstations, and users where Windows Hello for Business is not suitable.
+
+### Sign-In Log MFA Success
+
+<img src="evidence/sign-in-log-mfa-success.png" alt="Sanitized sign-in log MFA success screenshot" width="720">
+
+Shows a sanitized sign-in detail view where MFA requirements were satisfied in a lab environment. This is relevant because sign-in logs are used to validate authentication behavior, Conditional Access outcomes, and report-only findings during passwordless rollout planning.
 
 ---
 
@@ -217,6 +267,7 @@ Every new Conditional Access policy targeting authentication strength runs in re
 | Support model and procedures | Drafted |
 | Passwordless support workflow | Documented |
 | PowerShell scripts | Drafted |
+| Sanitized evidence gallery | Included |
 | Authentication method deep dives | Planned |
 | Exception handling model | Documented |
 
@@ -226,7 +277,7 @@ Every new Conditional Access policy targeting authentication strength runs in re
 
 - This is an in-progress portfolio case study, not a completed production rollout.
 - Baseline numbers, incidents, cost estimates, and organization names are scenario data created for documentation practice.
-- No tenant screenshots, pilot sign-in logs, device enrollment evidence, or production rollout results are included yet.
+- Included screenshots are sanitized lab or simulated enterprise screenshots; no production tenant screenshots, pilot results, device enrollment evidence, or production rollout results are included yet.
 - PowerShell scripts are draft operational examples and should be tested in a lab tenant before real use.
 
 ---
