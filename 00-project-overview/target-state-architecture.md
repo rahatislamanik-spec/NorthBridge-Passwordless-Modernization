@@ -25,6 +25,8 @@ This document defines the target authentication architecture for the NorthBridge
 
 ## 2. Target Authentication Architecture
 
+Visual companion: [NorthBridge Passwordless Architecture](northbridge-passwordless-architecture.html)
+
 ### 2.1 Method Assignment by User Population
 
 | Population | Primary Method | Secondary / Recovery | Shared Device |

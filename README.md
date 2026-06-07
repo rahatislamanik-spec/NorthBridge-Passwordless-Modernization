@@ -83,6 +83,7 @@ The AD toolkit established the identity foundation. This project builds the auth
     |   +-- business-problem.md
     |   +-- current-state-assessment.md
     |   +-- target-state-architecture.md
+    |   +-- northbridge-passwordless-architecture.html
     |
     +-- 02-conditional-access/
     |   +-- authentication-strength-policy.md
@@ -95,6 +96,16 @@ The AD toolkit established the identity foundation. This project builds the auth
         +-- New-TAPForUser.ps1
 
 Planned future sections include authentication method deep dives, pilot cohort design, rollout phase documentation, exception handling, and sanitized evidence artifacts.
+
+---
+
+## Architecture Diagram
+
+The target passwordless architecture is available as a standalone HTML diagram:
+
+[NorthBridge Passwordless Architecture](00-project-overview/northbridge-passwordless-architecture.html)
+
+The diagram is a visual companion to the target-state architecture document and uses planned success metrics rather than completed production results.
 
 ---
 
