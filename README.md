@@ -100,6 +100,9 @@ The AD toolkit established the identity foundation. This project builds the auth
     |   +-- help-desk-procedures.md
     |   +-- passwordless-support-workflow.md
     |
+    +-- 06-exception-management/
+    |   +-- break-glass-access-model.md
+    |
     +-- scripts/
         +-- Get-PasswordlessReadiness.ps1
         +-- New-TAPForUser.ps1
@@ -137,6 +140,8 @@ Conditional Access artifact: [Passwordless Authentication Strength Policy](02-co
 Readiness artifact: [Passwordless Readiness Assessment](04-readiness-assessment/passwordless-readiness-assessment.md)
 
 Support artifact: [Passwordless Support Workflow](05-support-model/passwordless-support-workflow.md)
+
+Governance artifact: [Break-Glass & Exception Management Model](06-exception-management/break-glass-access-model.md)
 
 | Phase | Cohort | Size | Timeline | Gate |
 |---|---|---|---|---|
@@ -213,7 +218,7 @@ Every new Conditional Access policy targeting authentication strength runs in re
 | Passwordless support workflow | Documented |
 | PowerShell scripts | Drafted |
 | Authentication method deep dives | Planned |
-| Exception handling model | Planned |
+| Exception handling model | Documented |
 
 ---
 
