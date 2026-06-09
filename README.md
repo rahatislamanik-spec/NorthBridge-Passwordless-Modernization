@@ -9,6 +9,18 @@
 
 ---
 
+## 🔗 Companion Project — AD Identity Operations Toolkit
+
+The PowerShell scripts used for passwordless readiness assessment in this project (`Get-PasswordlessReadiness.ps1`, `New-TAPForUser.ps1`, `Audit-AuthMethodRegistration.ps1`) are part of **Phase 10** of the AD Identity Operations Toolkit.
+
+| | |
+|---|---|
+| **Repo** | [AD-Identity-Operations-Toolkit](https://github.com/rahatislamanik-spec/AD-Identity-Operations-Toolkit) |
+| **What it covers** | 10-phase PowerShell governance framework — stale accounts, privileged access, password policy, group membership, service accounts, PIM, hybrid identity, and passwordless readiness |
+| **Relationship** | This repo covers enterprise architecture and deployment governance. The AD Toolkit covers the PowerShell assessment layer. Same NorthBridge Financial Group scenario. Complementary, not duplicate. |
+
+---
+
 ## Project Overview
 
 NorthBridge Financial Group is a fictional federally regulated Canadian financial institution operating under OSFI-style requirements, with **40,000+ employees**, **1,100+ branches**, and a hybrid workforce spanning corporate offices, branch counters, and remote knowledge workers.
