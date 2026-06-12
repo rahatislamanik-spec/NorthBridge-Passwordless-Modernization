@@ -1,4 +1,5 @@
 # NorthBridge Financial Group — Passwordless Authentication Modernization
+> **Status:** Evidence Update Pending
 
 **Microsoft Entra ID | Windows Hello for Business | FIDO2 | Authenticator | TAP | Conditional Access**
 
@@ -127,7 +128,7 @@ The AD toolkit established the identity foundation. This project builds the auth
         +-- Get-PasswordlessReadiness.ps1
         +-- New-TAPForUser.ps1
 
-Planned future sections include authentication method deep dives and sanitized evidence artifacts.
+Planned future work includes authentication method deep dives and additional implementation validation artifacts.
 
 ---
 
