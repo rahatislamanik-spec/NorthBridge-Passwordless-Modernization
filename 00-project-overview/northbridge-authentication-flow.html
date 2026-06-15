@@ -1,393 +1,268 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NorthBridge Enterprise Authentication Flow</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NorthBridge Financial Group — Zero Trust Authentication Flow</title>
+<style>
+  :root {
+    --navy-50: #E6F1FB;
+    --navy-100: #B5D4F4;
+    --navy-200: #85B7EB;
+    --navy-400: #378ADD;
+    --navy-600: #185FA5;
+    --navy-800: #0C447C;
+    --navy-900: #042C53;
 
-        body {
-            min-height: 100vh;
-            padding: 32px;
-            background: #edf7f4;
-            color: #162033;
-            font-family: "Segoe UI", Calibri, Arial, sans-serif;
-        }
+    --teal-50: #E1F5EE;
+    --teal-100: #9FE1CB;
+    --teal-200: #5DCAA5;
+    --teal-400: #1D9E75;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+    --teal-900: #04342C;
 
-        .container {
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 36px;
-            background: #ffffff;
-            border: 1px solid #cfe2dc;
-            border-radius: 10px;
-            box-shadow: 0 16px 42px rgba(22, 32, 51, 0.12);
-        }
+    --slate-50: #F1EFE8;
+    --slate-100: #D3D1C7;
+    --slate-200: #B4B2A9;
+    --slate-400: #888780;
+    --slate-600: #5F5E5A;
+    --slate-800: #444441;
+    --slate-900: #2C2C2A;
 
-        .back-link {
-            display: inline-block;
-            margin-bottom: 24px;
-            color: #087568;
-            font-size: 14px;
-            font-weight: 700;
-            text-decoration: none;
-        }
+    --bg: #F7F8FA;
+    --card-bg: #FFFFFF;
+    --border: #D9DEE6;
+    --text-primary: #1A2433;
+    --text-secondary: #5F6B7A;
+  }
 
-        .back-link:hover {
-            text-decoration: underline;
-        }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        header {
-            margin-bottom: 30px;
-            text-align: center;
-        }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+    padding: 2rem 1rem 4rem;
+  }
 
-        h1 {
-            margin-bottom: 10px;
-            color: #162033;
-            font-size: 30px;
-            line-height: 1.2;
-        }
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+  }
 
-        .subtitle {
-            color: #53647c;
-            font-size: 16px;
-            line-height: 1.5;
-        }
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--navy-600);
+    margin-bottom: 0.5rem;
+  }
 
-        .disclaimer {
-            margin: 20px 0 0;
-            padding: 14px 16px;
-            background: #f7fbfa;
-            border: 1px solid #cfe2dc;
-            border-left: 4px solid #087568;
-            border-radius: 6px;
-            color: #36455c;
-            font-size: 14px;
-            line-height: 1.5;
-            text-align: left;
-        }
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--navy-900);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
 
-        .flow {
-            display: grid;
-            gap: 14px;
-        }
+  .subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 640px;
+  }
 
-        .flow-step {
-            display: grid;
-            justify-items: center;
-        }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
 
-        .step-box {
-            width: min(100%, 760px);
-            padding: 18px 20px;
-            background: #ffffff;
-            border: 2px solid #6f8fc0;
-            border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(49, 92, 159, 0.12);
-            color: #162033;
-            font-weight: 700;
-            line-height: 1.35;
-            text-align: center;
-        }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
 
-        .step-box small {
-            display: block;
-            margin-top: 5px;
-            color: #53647c;
-            font-size: 12px;
-            font-weight: 500;
-        }
+  .swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+  }
 
-        .step-box.start-end {
-            max-width: 560px;
-            background: #087568;
-            border-color: #065d52;
-            border-radius: 999px;
-            color: #ffffff;
-        }
+  .swatch-navy { background: var(--navy-100); border: 1px solid var(--navy-400); }
+  .swatch-teal { background: var(--teal-100); border: 1px solid var(--teal-400); }
+  .swatch-slate { background: var(--slate-100); border: 1px solid var(--slate-400); }
 
-        .step-box.start-end small {
-            color: #d8f0ec;
-        }
+  .diagram-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    overflow-x: auto;
+  }
 
-        .step-box.process {
-            background: #f4f8fd;
-            border-color: #315c9f;
-        }
+  svg { display: block; width: 100%; height: auto; margin: 0 auto; max-width: 480px; }
 
-        .step-box.decision {
-            max-width: 520px;
-            background: #fff9e8;
-            border-color: #d5a51d;
-        }
+  .node-box-navy { fill: var(--navy-50); stroke: var(--navy-400); stroke-width: 1; }
+  .node-box-teal { fill: var(--teal-50); stroke: var(--teal-400); stroke-width: 1; }
+  .node-box-slate { fill: var(--slate-50); stroke: var(--slate-400); stroke-width: 1; }
 
-        .step-box.block {
-            background: #fff5f4;
-            border-color: #d66a52;
-            color: #9d2e1f;
-        }
+  .node-title-navy { font-size: 13px; font-weight: 600; fill: var(--navy-800); }
+  .node-sub-navy { font-size: 11px; fill: var(--navy-600); }
 
-        .step-box.success {
-            background: #f1fbf8;
-            border-color: #3d9987;
-            color: #0f6659;
-        }
+  .node-title-teal { font-size: 13px; font-weight: 600; fill: var(--teal-800); }
+  .node-sub-teal { font-size: 11px; fill: var(--teal-600); }
 
-        .arrow-down {
-            width: 3px;
-            height: 24px;
-            margin: 0 auto;
-            background: #087568;
-            position: relative;
-        }
+  .node-title-slate { font-size: 13px; font-weight: 600; fill: var(--slate-800); }
 
-        .arrow-down::after {
-            position: absolute;
-            bottom: -1px;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-left: 7px solid transparent;
-            border-right: 7px solid transparent;
-            border-top: 10px solid #087568;
-            content: "";
-            transform: translateX(-50%);
-        }
+  .connector { stroke: var(--slate-400); stroke-width: 1; fill: none; }
 
-        .decision-branch {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-            margin: 2px 0 8px;
-        }
+  .caption { font-size: 12px; fill: var(--text-secondary); }
+  .caption-strong { font-size: 12px; font-weight: 600; fill: var(--slate-600); }
 
-        .risk-branch {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 14px;
-            margin: 2px 0 8px;
-        }
+  .notes {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
 
-        .branch-label {
-            margin-bottom: 6px;
-            color: #53647c;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 0;
-            text-align: center;
-        }
+  .footer-note {
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
 
-        .branch-label.yes {
-            color: #0f6659;
-        }
+  a { color: var(--navy-600); text-decoration: none; }
+  a:hover { text-decoration: underline; }
 
-        .branch-label.no {
-            color: #9d2e1f;
-        }
-
-        .branch-label.medium {
-            color: #9f6d00;
-        }
-
-        .continue-line {
-            height: 4px;
-            margin-top: 22px;
-            background: #3d9987;
-            border-radius: 999px;
-        }
-
-        .explanation-box {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f4f8fd;
-            border: 1px solid #b8c9e2;
-            border-radius: 8px;
-        }
-
-        .explanation-title {
-            margin-bottom: 12px;
-            color: #162033;
-            font-size: 18px;
-            font-weight: 800;
-        }
-
-        .explanation-text,
-        .path-info {
-            color: #36455c;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .path-info {
-            margin-top: 18px;
-            padding: 15px;
-            background: #ffffff;
-            border: 1px solid #d8e0ea;
-            border-radius: 6px;
-        }
-
-        .path-success {
-            color: #0f6659;
-            font-weight: 800;
-        }
-
-        .path-block {
-            color: #9d2e1f;
-            font-weight: 800;
-        }
-
-        @media (max-width: 720px) {
-            body {
-                padding: 18px;
-            }
-
-            .container {
-                padding: 24px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .decision-branch,
-            .risk-branch {
-                grid-template-columns: 1fr;
-            }
-
-            .continue-line {
-                margin-top: 0;
-            }
-        }
-    </style>
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14181F;
+      --card-bg: #1C222C;
+      --border: #2C3645;
+      --text-primary: #E6E9EE;
+      --text-secondary: #9AA4B2;
+    }
+    .node-box-navy { fill: #1B2E45; stroke: var(--navy-200); }
+    .node-box-teal { fill: #173B33; stroke: var(--teal-200); }
+    .node-box-slate { fill: #232A35; stroke: var(--slate-200); }
+    .node-title-navy { fill: var(--navy-100); }
+    .node-sub-navy { fill: var(--navy-200); }
+    .node-title-teal { fill: var(--teal-100); }
+    .node-sub-teal { fill: var(--teal-200); }
+    .node-title-slate { fill: var(--slate-100); }
+    .connector { stroke: var(--slate-200); }
+    .caption { fill: var(--text-secondary); }
+    .caption-strong { fill: var(--slate-100); }
+  }
+</style>
 </head>
 <body>
-    <main class="container">
-        <a class="back-link" href="target-state-architecture.md">Back to target-state architecture</a>
+<div class="wrap">
 
-        <header>
-            <h1>Enterprise Authentication Flow</h1>
-            <p class="subtitle">Zero Trust sign-in process with Conditional Access, Identity Protection, and passwordless authentication</p>
-            <p class="disclaimer">
-                This diagram represents a target-state enterprise architecture and authentication workflow for a fictional passwordless modernization initiative. It is intended for architectural planning and portfolio demonstration purposes.
-            </p>
-        </header>
+  <div class="eyebrow">NorthBridge Financial Group · Authentication flow</div>
+  <h1>Zero Trust passwordless sign-in flow</h1>
+  <p class="subtitle">
+    Target-state sign-in workflow combining device context, Conditional Access,
+    Identity Protection, and phishing-resistant authentication methods before
+    Entra ID issues an access token.
+  </p>
 
-        <section class="flow" aria-label="Enterprise passwordless authentication flow">
-            <div class="flow-step">
-                <div class="step-box start-end">User Initiates Sign-In<small>Microsoft 365, Azure, or enterprise application</small></div>
-            </div>
-            <div class="arrow-down"></div>
+  <div class="legend">
+    <div class="legend-item"><span class="swatch swatch-slate"></span>Sign-in / access events</div>
+    <div class="legend-item"><span class="swatch swatch-navy"></span>Device and authentication</div>
+    <div class="legend-item"><span class="swatch swatch-teal"></span>Entra ID evaluation steps</div>
+  </div>
 
-            <div class="flow-step">
-                <div class="step-box process">Device Trust and Compliance Signals Collected<small>Intune compliance, Entra join state, location, app, and session context</small></div>
-            </div>
-            <div class="arrow-down"></div>
+  <div class="diagram-card">
+    <svg viewBox="0 0 480 620" xmlns="http://www.w3.org/2000/svg" role="img"
+         aria-label="Flowchart of the NorthBridge Zero Trust sign-in flow, starting with a user sign-in attempt, passing through device context check, Conditional Access evaluation, Identity Protection risk check, passwordless authentication, and Entra ID token issuance, ending with access granted to a workload">
 
-            <div class="flow-step">
-                <div class="step-box decision">Compliant or Trusted Device?</div>
-            </div>
-            <div class="decision-branch">
-                <div>
-                    <div class="branch-label no">NO</div>
-                    <div class="step-box block">Block, limit session, or require remediation<small>Policy action depends on application risk and rollout phase</small></div>
-                </div>
-                <div>
-                    <div class="branch-label yes">YES</div>
-                    <div class="continue-line" aria-label="Continue to Conditional Access evaluation"></div>
-                </div>
-            </div>
+      <defs>
+        <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="#888780"/>
+        </marker>
+      </defs>
 
-            <div class="arrow-down"></div>
-            <div class="flow-step">
-                <div class="step-box process">Conditional Access Policy Evaluation<small>Zero Trust policy engine evaluates user, device, app, location, and authentication strength</small></div>
-            </div>
-            <div class="arrow-down"></div>
+      <g>
+        <rect x="40" y="30" width="400" height="44" rx="8" class="node-box-slate"/>
+        <text x="240" y="56" text-anchor="middle" class="node-title-slate">User sign-in attempt</text>
+      </g>
+      <line x1="240" y1="74" x2="240" y2="106" class="connector" marker-end="url(#arrow2)"/>
 
-            <div class="flow-step">
-                <div class="step-box decision">Policy Requirements Satisfied?</div>
-            </div>
-            <div class="decision-branch">
-                <div>
-                    <div class="branch-label no">NO</div>
-                    <div class="step-box block">Block or require stronger authentication<small>Example: phishing-resistant method for admin or high-risk apps</small></div>
-                </div>
-                <div>
-                    <div class="branch-label yes">YES</div>
-                    <div class="continue-line" aria-label="Continue to risk evaluation"></div>
-                </div>
-            </div>
+      <g>
+        <rect x="30" y="114" width="420" height="56" rx="8" class="node-box-navy"/>
+        <text x="240" y="136" text-anchor="middle" class="node-title-navy">Device context check</text>
+        <text x="240" y="154" text-anchor="middle" class="node-sub-navy">Hybrid join, compliance state</text>
+      </g>
+      <line x1="240" y1="170" x2="240" y2="202" class="connector" marker-end="url(#arrow2)"/>
 
-            <div class="arrow-down"></div>
-            <div class="flow-step">
-                <div class="step-box process">Identity Protection Risk Evaluation<small>Sign-in risk and user risk influence the access decision</small></div>
-            </div>
-            <div class="arrow-down"></div>
+      <g>
+        <rect x="30" y="210" width="420" height="56" rx="8" class="node-box-teal"/>
+        <text x="240" y="232" text-anchor="middle" class="node-title-teal">Conditional Access evaluation</text>
+        <text x="240" y="250" text-anchor="middle" class="node-sub-teal">Authentication strength required</text>
+      </g>
+      <line x1="240" y1="266" x2="240" y2="298" class="connector" marker-end="url(#arrow2)"/>
 
-            <div class="flow-step">
-                <div class="step-box decision">Risk Level Acceptable?</div>
-            </div>
-            <div class="risk-branch">
-                <div>
-                    <div class="branch-label no">HIGH</div>
-                    <div class="step-box block">Block or require security remediation<small>High-risk access is not allowed to proceed silently</small></div>
-                </div>
-                <div>
-                    <div class="branch-label medium">MEDIUM</div>
-                    <div class="step-box process">Require stronger authentication<small>Passwordless or phishing-resistant challenge based on policy</small></div>
-                </div>
-                <div>
-                    <div class="branch-label yes">LOW</div>
-                    <div class="continue-line" aria-label="Continue to passwordless authentication"></div>
-                </div>
-            </div>
+      <g>
+        <rect x="30" y="306" width="420" height="56" rx="8" class="node-box-teal"/>
+        <text x="240" y="328" text-anchor="middle" class="node-title-teal">Identity Protection risk check</text>
+        <text x="240" y="346" text-anchor="middle" class="node-sub-teal">Sign-in risk evaluated in real time</text>
+      </g>
+      <line x1="240" y1="362" x2="240" y2="394" class="connector" marker-end="url(#arrow2)"/>
 
-            <div class="arrow-down"></div>
-            <div class="flow-step">
-                <div class="step-box process">Passwordless Authentication<small>Windows Hello for Business / FIDO2 Security Keys</small></div>
-            </div>
-            <div class="arrow-down"></div>
+      <g>
+        <rect x="30" y="402" width="420" height="56" rx="8" class="node-box-navy"/>
+        <text x="240" y="424" text-anchor="middle" class="node-title-navy">Passwordless authentication</text>
+        <text x="240" y="442" text-anchor="middle" class="node-sub-navy">WHfB, FIDO2, Authenticator, CBA</text>
+      </g>
+      <line x1="240" y1="458" x2="240" y2="490" class="connector" marker-end="url(#arrow2)"/>
 
-            <div class="flow-step">
-                <div class="step-box decision">Authentication Successful?</div>
-            </div>
-            <div class="decision-branch">
-                <div>
-                    <div class="branch-label no">NO</div>
-                    <div class="step-box block">Deny access and initiate recovery path<small>TAP, help desk validation, or account review as appropriate</small></div>
-                </div>
-                <div>
-                    <div class="branch-label yes">YES</div>
-                    <div class="continue-line" aria-label="Continue to token issuance"></div>
-                </div>
-            </div>
+      <g>
+        <rect x="30" y="498" width="420" height="56" rx="8" class="node-box-teal"/>
+        <text x="240" y="520" text-anchor="middle" class="node-title-teal">Entra ID token issuance</text>
+        <text x="240" y="538" text-anchor="middle" class="node-sub-teal">Token scoped to session and risk</text>
+      </g>
+      <line x1="240" y1="554" x2="240" y2="586" class="connector" marker-end="url(#arrow2)"/>
 
-            <div class="arrow-down"></div>
-            <div class="flow-step">
-                <div class="step-box process">Microsoft Entra ID Issues Access Token<small>Token contains evaluated claims and session controls for the target application</small></div>
-            </div>
-            <div class="arrow-down"></div>
+      <g>
+        <rect x="40" y="594" width="400" height="20" rx="8" class="node-box-slate"/>
+      </g>
+      <text x="240" y="608" text-anchor="middle" class="node-title-slate">Access granted to workload</text>
 
-            <div class="flow-step">
-                <div class="step-box success">User Accesses Application<small>Microsoft 365, Azure resources, or integrated enterprise app</small></div>
-            </div>
-        </section>
+    </svg>
+  </div>
 
-        <section class="explanation-box" aria-labelledby="reviewer-explanation">
-            <h2 class="explanation-title" id="reviewer-explanation">Reviewer Explanation</h2>
-            <p class="explanation-text">
-                This flow demonstrates a target Zero Trust sign-in path: device context, Conditional Access requirements, risk signals, and passwordless authentication are evaluated before Entra ID issues an access token. Conditional Access is shown as the policy engine, while Identity Protection supplies risk signals that can block, challenge, or route the user through remediation.
-            </p>
-            <div class="path-info">
-                <p><span class="path-success">Success path:</span> trusted device and context, CA requirements satisfied, acceptable risk, passwordless authentication succeeds, token issued, application access granted.</p>
-                <p><span class="path-block">Block or remediation path:</span> non-compliant device, failed policy, elevated risk, or failed authentication can block access, require stronger authentication, or route the user to recovery.</p>
-            </div>
-        </section>
-    </main>
+  <p class="caption" style="margin-top: 0.75rem;">
+    ↻ Failed checks at any evaluation step loop back to step-up authentication or
+    Temporary Access Pass recovery, rather than allowing sign-in to proceed.
+  </p>
+
+  <p class="notes">
+    This diagram illustrates the target-state Zero Trust sign-in workflow for NorthBridge
+    Financial Group, a fictional federally regulated Canadian financial institution.
+    It reflects planned design rather than completed production results. See the
+    <a href="https://github.com/rahatislamanik-spec/NorthBridge-Passwordless-Modernization">repository README</a>
+    for full project context.
+  </p>
+
+  <div class="footer-note">
+    NorthBridge Financial Group — Passwordless Authentication Modernization · Built by Md Rahat Islam Anik ·
+    <a href="https://rahatislamanik-spec.github.io/IT-Portfolio-Rahat-Islam-Anik">IT Portfolio</a>
+  </div>
+
+</div>
 </body>
 </html>
