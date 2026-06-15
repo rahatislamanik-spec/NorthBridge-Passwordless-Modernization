@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NorthBridge Financial Group — Passwordless Authentication Modernization | Md Rahat Islam Anik</title>
+<style>
+  :root {
+    --navy-50: #E6F1FB;
+    --navy-100: #B5D4F4;
+    --navy-200: #85B7EB;
+    --navy-400: #378ADD;
+    --navy-600: #185FA5;
+    --navy-800: #0C447C;
+    --navy-900: #042C53;
+
+    --teal-50: #E1F5EE;
+    --teal-100: #9FE1CB;
+    --teal-200: #5DCAA5;
+    --teal-400: #1D9E75;
+    --teal-600: #0F6E56;
+    --teal-800: #085041;
+    --teal-900: #04342C;
+
+    --slate-50: #F1EFE8;
+    --slate-100: #D3D1C7;
+    --slate-200: #B4B2A9;
+    --slate-400: #888780;
+    --slate-600: #5F5E5A;
+    --slate-800: #444441;
+    --slate-900: #2C2C2A;
+
+    --bg: #F7F8FA;
+    --card-bg: #FFFFFF;
+    --border: #D9DEE6;
+    --text-primary: #1A2433;
+    --text-secondary: #5F6B7A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--navy-600);
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--navy-900);
+    margin-bottom: 0.75rem;
+    line-height: 1.25;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--navy-900);
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--teal-200);
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--navy-800);
+    margin: 1.5rem 0 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    max-width: 720px;
+  }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--teal-50);
+    color: var(--teal-800);
+    border: 1px solid var(--teal-200);
+  }
+
+  .badge-status {
+    background: var(--navy-50);
+    color: var(--navy-800);
+    border: 1px solid var(--navy-200);
+  }
+
+  .quote {
+    font-style: italic;
+    color: var(--navy-800);
+    border-left: 3px solid var(--teal-400);
+    padding: 0.75rem 1.25rem;
+    margin: 1.5rem 0;
+    background: var(--teal-50);
+    border-radius: 0 8px 8px 0;
+    font-size: 1.05rem;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+
+  .swatch-navy { background: var(--navy-100); border: 1px solid var(--navy-400); }
+  .swatch-teal { background: var(--teal-100); border: 1px solid var(--teal-400); }
+  .swatch-slate { background: var(--slate-100); border: 1px solid var(--slate-400); }
+
+  .diagram-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+
+  svg { display: block; width: 100%; height: auto; margin: 0 auto; }
+  .flow-svg svg { max-width: 480px; }
+
+  .node-box-navy { fill: var(--navy-50); stroke: var(--navy-400); stroke-width: 1; }
+  .node-box-teal { fill: var(--teal-50); stroke: var(--teal-400); stroke-width: 1; }
+  .node-box-slate { fill: var(--slate-50); stroke: var(--slate-400); stroke-width: 1; }
+
+  .node-title-navy { font-size: 13px; font-weight: 600; fill: var(--navy-800); }
+  .node-sub-navy { font-size: 11px; fill: var(--navy-600); }
+
+  .node-title-teal { font-size: 13px; font-weight: 600; fill: var(--teal-800); }
+  .node-sub-teal { font-size: 11px; fill: var(--teal-600); }
+
+  .node-title-slate { font-size: 13px; font-weight: 600; fill: var(--slate-800); }
+
+  .layer-rect-users { fill: var(--slate-50); stroke: var(--slate-400); stroke-width: 1; }
+  .layer-rect-control { fill: var(--teal-50); stroke: var(--teal-400); stroke-width: 1; }
+  .layer-rect-workloads { fill: var(--slate-50); stroke: var(--slate-400); stroke-width: 1; }
+
+  .layer-label { font-size: 13px; font-weight: 600; fill: var(--slate-800); }
+  .layer-label-teal { font-size: 13px; font-weight: 600; fill: var(--teal-800); }
+
+  .connector { stroke: var(--slate-400); stroke-width: 1; fill: none; }
+
+  .caption { font-size: 12px; fill: var(--text-secondary); }
+  .caption-strong { font-size: 12px; font-weight: 600; fill: var(--slate-600); }
+
+  .notes {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    font-size: 0.9rem;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    background: var(--navy-50);
+    color: var(--navy-800);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  .gallery figure {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem;
+    margin: 0;
+  }
+
+  .gallery img {
+    width: 100%;
+    border-radius: 8px;
+    display: block;
+    border: 1px solid var(--border);
+  }
+
+  .gallery figcaption {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    line-height: 1.5;
+  }
+
+  .gallery figcaption strong {
+    display: block;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .companion-card {
+    background: var(--teal-50);
+    border: 1px solid var(--teal-200);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+  }
+
+  .companion-card a { font-weight: 600; }
+
+  a { color: var(--navy-600); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .interactive-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .footer-note {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14181F;
+      --card-bg: #1C222C;
+      --border: #2C3645;
+      --text-primary: #E6E9EE;
+      --text-secondary: #9AA4B2;
+    }
+    .badge { background: #173B33; color: var(--teal-100); border-color: var(--teal-600); }
+    .badge-status { background: #1B2E45; color: var(--navy-100); border-color: var(--navy-600); }
+    .quote { background: #16332C; color: var(--teal-100); border-left-color: var(--teal-200); }
+    th { background: #1B2E45; color: var(--navy-100); }
+    .companion-card { background: #16332C; border-color: var(--teal-600); }
+    .node-box-navy { fill: #1B2E45; stroke: var(--navy-200); }
+    .node-box-teal { fill: #173B33; stroke: var(--teal-200); }
+    .node-box-slate { fill: #232A35; stroke: var(--slate-200); }
+    .node-title-navy { fill: var(--navy-100); }
+    .node-sub-navy { fill: var(--navy-200); }
+    .node-title-teal { fill: var(--teal-100); }
+    .node-sub-teal { fill: var(--teal-200); }
+    .node-title-slate { fill: var(--slate-100); }
+    .layer-rect-users { fill: #232A35; stroke: var(--slate-200); }
+    .layer-rect-control { fill: #16332C; stroke: var(--teal-200); }
+    .layer-rect-workloads { fill: #232A35; stroke: var(--slate-200); }
+    .layer-label { fill: var(--slate-100); }
+    .layer-label-teal { fill: var(--teal-100); }
+    .connector { stroke: var(--slate-200); }
+    .caption { fill: var(--text-secondary); }
+    .caption-strong { fill: var(--slate-100); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">NorthBridge Financial Group · Identity &amp; Access Management</div>
+  <h1>Passwordless Authentication Modernization</h1>
+  <p class="subtitle">
+    A release-candidate architecture and rollout planning case study for moving a 40,000-employee
+    fictional Canadian financial institution from password-based sign-in toward phishing-resistant,
+    passwordless authentication across corporate Windows devices, branch terminals, and remote workers.
+  </p>
+
+  <div class="badge-row">
+    <span class="badge badge-status">Status: Evidence Update Pending</span>
+    <span class="badge">Microsoft Entra ID</span>
+    <span class="badge">Windows Hello for Business</span>
+    <span class="badge">FIDO2</span>
+    <span class="badge">Conditional Access</span>
+    <span class="badge">Zero Trust</span>
+  </div>
+
+  <div class="quote">
+    "Passwords are the most exploited credential vector in financial services. This project documents
+    a phased path to reduce password dependency without breaking operations."
+  </div>
+
+  <h2>The Business Case</h2>
+  <p>
+    Following a simulated password-spray incident that compromised 14 branch accounts in Q3 2024,
+    NorthBridge's Identity &amp; Access Management team initiated a phased passwordless authentication
+    modernization program under the direction of the Chief Information Security Officer.
+  </p>
+
+  <table>
+    <tr><th>Driver</th><th>Detail</th></tr>
+    <tr><td>Regulatory pressure</td><td>OSFI B-13 Technology and Cyber Risk Guideline requires phishing-resistant MFA for privileged and high-risk access</td></tr>
+    <tr><td>Incident response</td><td>Q3 2024 password-spray attack — 14 accounts compromised, 6-hour containment, $340K estimated response cost</td></tr>
+    <tr><td>Zero Trust alignment</td><td>NorthBridge Zero Trust roadmap requires device-bound, phishing-resistant credentials by Q4 2025</td></tr>
+    <tr><td>User experience</td><td>2,200 help desk tickets per quarter are password-related (resets, lockouts, expired credentials)</td></tr>
+    <tr><td>Operational cost</td><td>Password reset tickets cost an estimated $18-$22 per ticket — $40K-$48K per quarter in support overhead</td></tr>
+  </table>
+
+  <h2>Enterprise Passwordless Architecture</h2>
+  <p>
+    Target-state Microsoft Entra ID architecture for a phased move away from password-based sign-in,
+    spanning corporate Windows devices, branch terminals, and remote workers.
+  </p>
+
+  <div class="legend">
+    <div class="legend-item"><span class="swatch swatch-navy"></span>Users and devices</div>
+    <div class="legend-item"><span class="swatch swatch-teal"></span>Identity control plane (Entra ID)</div>
+    <div class="legend-item"><span class="swatch swatch-slate"></span>Structural / workloads</div>
+  </div>
+
+  <div class="diagram-card">
+    <svg viewBox="0 0 680 600" xmlns="http://www.w3.org/2000/svg" role="img"
+         aria-label="Diagram of the NorthBridge passwordless architecture showing users and devices, the Entra ID identity control plane with Conditional Access and authentication methods, and downstream workloads">
+
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="#888780"/>
+        </marker>
+      </defs>
+
+      <!-- Layer 1: Users and devices -->
+      <rect x="40" y="30" width="600" height="120" rx="16" class="layer-rect-users"/>
+      <text x="60" y="56" class="layer-label">Users and devices</text>
+
+      <g>
+        <rect x="60" y="76" width="170" height="56" rx="8" class="node-box-navy"/>
+        <text x="145" y="98" text-anchor="middle" class="node-title-navy">Corporate Windows</text>
+        <text x="145" y="116" text-anchor="middle" class="node-sub-navy">Windows Hello for Business</text>
+      </g>
+
+      <g>
+        <rect x="255" y="76" width="170" height="56" rx="8" class="node-box-navy"/>
+        <text x="340" y="98" text-anchor="middle" class="node-title-navy">Branch terminals</text>
+        <text x="340" y="116" text-anchor="middle" class="node-sub-navy">FIDO2 security keys</text>
+      </g>
+
+      <g>
+        <rect x="450" y="76" width="170" height="56" rx="8" class="node-box-navy"/>
+        <text x="535" y="98" text-anchor="middle" class="node-title-navy">Remote and mobile</text>
+        <text x="535" y="116" text-anchor="middle" class="node-sub-navy">Authenticator, CBA</text>
+      </g>
+
+      <line x1="145" y1="132" x2="145" y2="172" class="connector" marker-end="url(#arrow)"/>
+      <line x1="340" y1="132" x2="340" y2="172" class="connector" marker-end="url(#arrow)"/>
+      <line x1="535" y1="132" x2="535" y2="172" class="connector" marker-end="url(#arrow)"/>
+
+      <!-- Layer 2: Identity control plane -->
+      <rect x="40" y="180" width="600" height="280" rx="16" class="layer-rect-control"/>
+      <text x="60" y="206" class="layer-label-teal">Identity control plane — Microsoft Entra ID</text>
+
+      <g>
+        <rect x="60" y="226" width="270" height="56" rx="8" class="node-box-teal"/>
+        <text x="195" y="248" text-anchor="middle" class="node-title-teal">Conditional Access</text>
+        <text x="195" y="266" text-anchor="middle" class="node-sub-teal">Authentication strength, report-only</text>
+      </g>
+
+      <g>
+        <rect x="350" y="226" width="270" height="56" rx="8" class="node-box-teal"/>
+        <text x="485" y="248" text-anchor="middle" class="node-title-teal">Identity Protection</text>
+        <text x="485" y="266" text-anchor="middle" class="node-sub-teal">Risk-based sign-in evaluation</text>
+      </g>
+
+      <line x1="195" y1="282" x2="195" y2="312" class="connector" marker-end="url(#arrow)"/>
+      <line x1="485" y1="282" x2="485" y2="312" class="connector" marker-end="url(#arrow)"/>
+
+      <g>
+        <rect x="60" y="320" width="270" height="56" rx="8" class="node-box-teal"/>
+        <text x="195" y="342" text-anchor="middle" class="node-title-teal">Authentication methods</text>
+        <text x="195" y="360" text-anchor="middle" class="node-sub-teal">WHfB, FIDO2, Authenticator, TAP</text>
+      </g>
+
+      <g>
+        <rect x="350" y="320" width="270" height="56" rx="8" class="node-box-teal"/>
+        <text x="485" y="342" text-anchor="middle" class="node-title-teal">Cloud Kerberos trust</text>
+        <text x="485" y="360" text-anchor="middle" class="node-sub-teal">Hybrid join, no PKI required</text>
+      </g>
+
+      <line x1="195" y1="376" x2="195" y2="406" class="connector" marker-end="url(#arrow)"/>
+      <line x1="485" y1="376" x2="485" y2="406" class="connector" marker-end="url(#arrow)"/>
+
+      <g>
+        <rect x="60" y="414" width="270" height="36" rx="8" class="node-box-teal"/>
+        <text x="195" y="436" text-anchor="middle" class="node-title-teal">Hybrid identity sync</text>
+      </g>
+
+      <g>
+        <rect x="350" y="414" width="270" height="36" rx="8" class="node-box-teal"/>
+        <text x="485" y="436" text-anchor="middle" class="node-title-teal">Break-glass and exceptions</text>
+      </g>
+
+      <line x1="195" y1="450" x2="195" y2="480" class="connector" marker-end="url(#arrow)"/>
+      <line x1="485" y1="450" x2="485" y2="480" class="connector" marker-end="url(#arrow)"/>
+
+      <!-- Layer 3: Workloads -->
+      <rect x="40" y="480" width="600" height="60" rx="16" class="layer-rect-workloads"/>
+      <text x="340" y="514" text-anchor="middle" class="node-title-slate">Workloads — branch systems, M365, line-of-business apps</text>
+
+      <text x="340" y="575" text-anchor="middle" class="caption">Target-state architecture: phased rollout from corporate devices through branch terminals to remote workers</text>
+
+    </svg>
+  </div>
+  <a class="interactive-link" href="00-project-overview/northbridge-passwordless-architecture.html">View standalone interactive version →</a>
+
+  <h2>Zero Trust Authentication Flow</h2>
+  <p>
+    Target-state sign-in workflow combining device context, Conditional Access, Identity Protection,
+    and phishing-resistant authentication methods before Entra ID issues an access token.
+  </p>
+
+  <div class="legend">
+    <div class="legend-item"><span class="swatch swatch-slate"></span>Sign-in / access events</div>
+    <div class="legend-item"><span class="swatch swatch-navy"></span>Device and authentication</div>
+    <div class="legend-item"><span class="swatch swatch-teal"></span>Entra ID evaluation steps</div>
+  </div>
+
+  <div class="diagram-card flow-svg">
+    <svg viewBox="0 0 480 620" xmlns="http://www.w3.org/2000/svg" role="img"
+         aria-label="Flowchart of the NorthBridge Zero Trust sign-in flow, starting with a user sign-in attempt, passing through device context check, Conditional Access evaluation, Identity Protection risk check, passwordless authentication, and Entra ID token issuance, ending with access granted to a workload">
+
+      <defs>
+        <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="#888780"/>
+        </marker>
+      </defs>
+
+      <g>
+        <rect x="40" y="30" width="400" height="44" rx="8" class="node-box-slate"/>
+        <text x="240" y="56" text-anchor="middle" class="node-title-slate">User sign-in attempt</text>
+      </g>
+      <line x1="240" y1="74" x2="240" y2="106" class="connector" marker-end="url(#arrow2)"/>
+
+      <g>
+        <rect x="30" y="114" width="420" height="56" rx="8" class="node-box-navy"/>
+        <text x="240" y="136" text-anchor="middle" class="node-title-navy">Device context check</text>
+        <text x="240" y="154" text-anchor="middle" class="node-sub-navy">Hybrid join, compliance state</text>
+      </g>
+      <line x1="240" y1="170" x2="240" y2="202" class="connector" marker-end="url(#arrow2)"/>
+
+      <g>
+        <rect x="30" y="210" width="420" height="56" rx="8" class="node-box-teal"/>
+        <text x="240" y="232" text-anchor="middle" class="node-title-teal">Conditional Access evaluation</text>
+        <text x="240" y="250" text-anchor="middle" class="node-sub-teal">Authentication strength required</text>
+      </g>
+      <line x1="240" y1="266" x2="240" y2="298" class="connector" marker-end="url(#arrow2)"/>
+
+      <g>
+        <rect x="30" y="306" width="420" height="56" rx="8" class="node-box-teal"/>
+        <text x="240" y="328" text-anchor="middle" class="node-title-teal">Identity Protection risk check</text>
+        <text x="240" y="346" text-anchor="middle" class="node-sub-teal">Sign-in risk evaluated in real time</text>
+      </g>
+      <line x1="240" y1="362" x2="240" y2="394" class="connector" marker-end="url(#arrow2)"/>
+
+      <g>
+        <rect x="30" y="402" width="420" height="56" rx="8" class="node-box-navy"/>
+        <text x="240" y="424" text-anchor="middle" class="node-title-navy">Passwordless authentication</text>
+        <text x="240" y="442" text-anchor="middle" class="node-sub-navy">WHfB, FIDO2, Authenticator, CBA</text>
+      </g>
+      <line x1="240" y1="458" x2="240" y2="490" class="connector" marker-end="url(#arrow2)"/>
+
+      <g>
+        <rect x="30" y="498" width="420" height="56" rx="8" class="node-box-teal"/>
+        <text x="240" y="520" text-anchor="middle" class="node-title-teal">Entra ID token issuance</text>
+        <text x="240" y="538" text-anchor="middle" class="node-sub-teal">Token scoped to session and risk</text>
+      </g>
+      <line x1="240" y1="554" x2="240" y2="586" class="connector" marker-end="url(#arrow2)"/>
+
+      <g>
+        <rect x="40" y="594" width="400" height="20" rx="8" class="node-box-slate"/>
+      </g>
+      <text x="240" y="608" text-anchor="middle" class="node-title-slate">Access granted to workload</text>
+
+    </svg>
+  </div>
+  <p class="notes">
+    ↻ Failed checks at any evaluation step loop back to step-up authentication or
+    Temporary Access Pass recovery, rather than allowing sign-in to proceed.
+  </p>
+  <a class="interactive-link" href="00-project-overview/northbridge-authentication-flow.html">View standalone interactive version →</a>
+
+  <h2>Authentication Method Coverage</h2>
+  <table>
+    <tr><th>Method</th><th>Use Case</th><th>Device Type</th><th>Phishing-Resistant</th><th>Phase</th></tr>
+    <tr><td>Windows Hello for Business</td><td>Primary sign-in for corporate Windows devices</td><td>Managed Windows 10/11</td><td>Yes</td><td>Phase 1-2</td></tr>
+    <tr><td>FIDO2 Security Keys</td><td>Shared workstations, branch terminals, privileged access</td><td>Any</td><td>Yes</td><td>Phase 2-3</td></tr>
+    <tr><td>Microsoft Authenticator Passwordless</td><td>Remote and mobile workers</td><td>iOS / Android</td><td>Yes</td><td>Phase 1-2</td></tr>
+    <tr><td>Temporary Access Pass (TAP)</td><td>Onboarding, device replacement, recovery</td><td>Any</td><td>Time-limited</td><td>Ongoing</td></tr>
+    <tr><td>Certificate-based Auth (CBA)</td><td>Executive and high-privilege accounts</td><td>Managed devices</td><td>Yes</td><td>Phase 2</td></tr>
+  </table>
+
+  <h2>Evidence Gallery</h2>
+  <p>
+    Sanitized screenshots from a lab or simulated enterprise Microsoft Entra ID environment.
+    Sensitive tenant labels, account identifiers, and session details are redacted. These
+    demonstrate configuration concepts and validation points — not proof of completed production deployment.
+  </p>
+
+  <div class="gallery">
+    <figure>
+      <img src="evidence/authentication-methods-policy.png" alt="Sanitized Microsoft Entra authentication methods policy screenshot">
+      <figcaption><strong>Authentication Methods Policy</strong>Configured Authentication Methods options in Microsoft Entra ID, relevant to passwordless rollout planning.</figcaption>
+    </figure>
+    <figure>
+      <img src="evidence/conditional-access-policies.png" alt="Sanitized Conditional Access policies screenshot">
+      <figcaption><strong>Conditional Access Policies</strong>Conditional Access policies in a report-only validation posture, ahead of staged enforcement.</figcaption>
+    </figure>
+    <figure>
+      <img src="evidence/authentication-strengths-passwordless-mfa.png" alt="Sanitized Authentication Strengths passwordless MFA screenshot">
+      <figcaption><strong>Authentication Strengths</strong>Authentication Strength configuration for passwordless and phishing-resistant access patterns.</figcaption>
+    </figure>
+    <figure>
+      <img src="evidence/temporary-access-pass-settings.png" alt="Sanitized Temporary Access Pass settings screenshot">
+      <figcaption><strong>Temporary Access Pass Settings</strong>TAP used as a controlled onboarding and recovery method during rollout, not a standing sign-in method.</figcaption>
+    </figure>
+    <figure>
+      <img src="evidence/passkey-fido2-settings.png" alt="Sanitized Passkey FIDO2 settings screenshot">
+      <figcaption><strong>Passkey / FIDO2 Settings</strong>FIDO2 security key configuration for phishing-resistant access on shared workstations and privileged accounts.</figcaption>
+    </figure>
+    <figure>
+      <img src="evidence/sign-in-log-mfa-success.png" alt="Sanitized sign-in log MFA success screenshot">
+      <figcaption><strong>Sign-In Log — MFA Success</strong>Sanitized sign-in detail showing MFA requirements satisfied in a lab environment.</figcaption>
+    </figure>
+  </div>
+
+  <h2>Companion Project — AD Identity Operations Toolkit</h2>
+  <div class="companion-card">
+    <p>
+      The PowerShell scripts used for passwordless readiness assessment in this project
+      (<code>Get-PasswordlessReadiness.ps1</code>, <code>New-TAPForUser.ps1</code>) are part of
+      <strong>Phase 10</strong> of the AD Identity Operations Toolkit.
+    </p>
+    <p style="margin-top: 0.5rem;">
+      This repo covers enterprise architecture and deployment governance. The AD Toolkit covers
+      the PowerShell assessment layer. Same NorthBridge Financial Group scenario — complementary, not duplicate.
+    </p>
+    <a href="https://github.com/rahatislamanik-spec/AD-Identity-Operations-Toolkit">View AD-Identity-Operations-Toolkit →</a>
+  </div>
+
+  <p class="notes" style="margin-top: 2rem;">
+    This page presents target-state architecture, planning artifacts, and sanitized lab evidence for
+    NorthBridge Financial Group, a fictional federally regulated Canadian financial institution.
+    It does not represent a completed production tenant deployment. See the
+    <a href="https://github.com/rahatislamanik-spec/NorthBridge-Passwordless-Modernization">repository README</a>
+    for full project context, including current evidence status and related artifacts.
+  </p>
+
+  <div class="footer-note">
+    NorthBridge Financial Group — Passwordless Authentication Modernization · Built by Md Rahat Islam Anik ·
+    <a href="https://github.com/rahatislamanik-spec/NorthBridge-Passwordless-Modernization">GitHub Repository</a> ·
+    <a href="https://rahatislamanik-spec.github.io/IT-Portfolio-Rahat-Islam-Anik">IT Portfolio</a>
+  </div>
+
+</div>
+</body>
+</html>
