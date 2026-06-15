@@ -1,6 +1,8 @@
 # NorthBridge Financial Group — Passwordless Authentication Modernization
 > **Status:** Evidence Update Pending
 
+🌐 **[View Live Showcase](https://rahatislamanik-spec.github.io/NorthBridge-Passwordless-Modernization/)**
+
 **Microsoft Entra ID | Windows Hello for Business | FIDO2 | Authenticator | TAP | Conditional Access**
 
 ---
