@@ -1,5 +1,5 @@
 # NorthBridge Financial Group — Passwordless Authentication Modernization
-> **Status:** Evidence Update Pending
+> **Status:** Portfolio Complete — v1.0 Passwordless Modernization Architecture & Lab Evidence Case Study
 
 🌐 **[View Live Showcase](https://rahatislamanik-spec.github.io/NorthBridge-Passwordless-Modernization/)**
 
@@ -14,13 +14,13 @@
 
 ## 🔗 Companion Project — AD Identity Operations Toolkit
 
-The PowerShell scripts used for passwordless readiness assessment in this project (`Get-PasswordlessReadiness.ps1`, `New-TAPForUser.ps1`, `Audit-AuthMethodRegistration.ps1`) are part of **Phase 10** of the AD Identity Operations Toolkit.
+This project complements the **AD-Identity-Operations-Toolkit**, which documents on-premises Active Directory governance and identity operations controls. Together, the two repositories show the relationship between traditional AD identity hygiene and modern Microsoft Entra ID passwordless modernization.
 
 | | |
 |---|---|
 | **Repo** | [AD-Identity-Operations-Toolkit](https://github.com/rahatislamanik-spec/AD-Identity-Operations-Toolkit) |
-| **What it covers** | 10-phase PowerShell governance framework — stale accounts, privileged access, password policy, group membership, service accounts, PIM, hybrid identity, and passwordless readiness |
-| **Relationship** | This repo covers enterprise architecture and deployment governance. The AD Toolkit covers the PowerShell assessment layer. Same NorthBridge Financial Group scenario. Complementary, not duplicate. |
+| **What it covers** | PowerShell-based Active Directory governance framework covering stale accounts, privileged access, password policy, group membership, service accounts, hybrid identity, and standing privileged access |
+| **Relationship** | AD Toolkit covers identity hygiene and governance foundations. NorthBridge covers target-state passwordless architecture, rollout planning, Conditional Access design, support operations, and sanitized Entra ID lab evidence. |
 
 ---
 
@@ -30,9 +30,9 @@ NorthBridge Financial Group is a fictional federally regulated Canadian financia
 
 Following a simulated password-spray incident that compromised 14 branch accounts in Q3 2024, the Identity & Access Management team initiated a phased passwordless authentication modernization program under the direction of the Chief Information Security Officer.
 
-This repository is a **release-candidate production-style architecture and rollout planning case study**. It documents the business problem, current-state assessment, target-state architecture, Conditional Access design, support model, governance model, sanitized lab evidence, and early automation drafts for moving a large workforce from password-based authentication toward phishing-resistant sign-in across Windows workstations, mobile users, and shared branch terminals.
+This repository is a **Version 1 portfolio-complete architecture and lab evidence case study**. It documents the business problem, current-state assessment, target-state architecture, Conditional Access design, support model, governance model, sanitized lab evidence, and automation drafts for moving a large workforce from password-based authentication toward phishing-resistant sign-in across Windows workstations, mobile users, and shared branch terminals.
 
-This is not presented as a completed tenant deployment. Additional implementation evidence, pilot results, device enrollment screenshots, and final rollout artifacts are planned future additions.
+This is not presented as a completed tenant-wide production rollout. It is intentionally scoped as an architecture, governance, rollout planning, and lab evidence project.
 
 ---
 
@@ -43,12 +43,12 @@ This is not presented as a completed tenant deployment. Additional implementatio
 | Business case and scenario | Documented |
 | Current-state identity assessment | Scenario-based baseline documented |
 | Target passwordless architecture | Documented |
-| Conditional Access authentication strength design | Drafted |
-| Help desk support procedure | Drafted |
-| PowerShell automation | Two draft scripts included |
+| Conditional Access authentication strength design | Complete as planning artifact |
+| Help desk support procedure | Complete as planning artifact |
+| PowerShell automation examples | Included as draft operational examples |
 | Sanitized lab screenshots | Included in evidence gallery |
-| Pilot or production deployment evidence | Not included yet |
-| Physical device/FIDO2 rollout evidence | Not included yet |
+| Production rollout evidence | Not included in Version 1 scope |
+| Physical device/FIDO2 rollout evidence | Not included in Version 1 scope |
 
 ---
 
@@ -130,7 +130,7 @@ The AD toolkit established the identity foundation. This project builds the auth
         +-- Get-PasswordlessReadiness.ps1
         +-- New-TAPForUser.ps1
 
-Planned future work includes authentication method deep dives and additional implementation validation artifacts.
+Version 1 is closed as an architecture, governance, rollout planning, and lab evidence case study.
 
 ---
 
@@ -275,22 +275,21 @@ Every new Conditional Access policy targeting authentication strength runs in re
 | Project overview and business case | Complete |
 | Current-state assessment | Complete |
 | Target-state architecture | Complete |
-| Conditional Access policy design | Drafted |
+| Conditional Access policy design | Complete as planning artifact |
 | Passwordless authentication strength policy | Documented |
 | Passwordless readiness assessment | Documented |
 | Pilot rollout plan | Documented |
-| Support model and procedures | Drafted |
+| Support model and procedures | Documented |
 | Passwordless support workflow | Documented |
-| PowerShell scripts | Drafted |
+| PowerShell scripts | Included as draft operational examples |
 | Sanitized evidence gallery | Included |
-| Authentication method deep dives | Planned |
 | Exception handling model | Documented |
 
 ---
 
 ## Limitations
 
-- This is an in-progress portfolio case study, not a completed production rollout.
+- This is a Version 1 portfolio-complete case study, not a completed production rollout.
 - Baseline numbers, incidents, cost estimates, and organization names are scenario data created for documentation practice.
 - Included screenshots are sanitized lab or simulated enterprise screenshots; no production tenant screenshots, pilot results, device enrollment evidence, or production rollout results are included yet.
 - PowerShell scripts are draft operational examples and should be tested in a lab tenant before real use.
