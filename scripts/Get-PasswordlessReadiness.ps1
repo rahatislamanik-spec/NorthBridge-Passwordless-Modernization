@@ -1,36 +1,39 @@
-# =============================================================================
-# Get-PasswordlessReadiness.ps1
-# NorthBridge Financial Group — IAM Architecture Team
-# Version: 1.0 | Date: June 2026
-# =============================================================================
-#
-# DESCRIPTION:
-#   Audits all licensed Entra ID users for passwordless and phishing-resistant
-#   authentication method registration status. Identifies gaps in coverage
-#   across Windows Hello for Business, FIDO2 security keys, and Microsoft
-#   Authenticator passwordless phone sign-in.
-#
-#   Designed for use during Phase 0 baseline assessment and ongoing program
-#   tracking throughout the Passwordless Authentication Modernization program.
-#
-# OUTPUT:
-#   - Console summary with coverage percentages
-#   - CSV export: PasswordlessReadiness_[timestamp].csv
-#   - Gap report: accounts with no phishing-resistant method registered
-#
-# PREREQUISITES:
-#   - Microsoft Graph PowerShell SDK
-#   - Permissions required:
-#       UserAuthenticationMethod.Read.All
-#       User.Read.All
-#       Reports.Read.All
-#
-# USAGE:
-#   .\Get-PasswordlessReadiness.ps1
-#   .\Get-PasswordlessReadiness.ps1 -ExportPath "C:\Reports"
-#   .\Get-PasswordlessReadiness.ps1 -DepartmentFilter "Branch Operations"
-#
-# =============================================================================
+<#
+.SYNOPSIS
+    Get-PasswordlessReadiness.ps1 — NorthBridge Financial Group IAM Architecture Team
+.DESCRIPTION
+    Audits all licensed Entra ID users for passwordless and phishing-resistant
+    authentication method registration status. Identifies gaps in coverage
+    across Windows Hello for Business, FIDO2 security keys, and Microsoft
+    Authenticator passwordless phone sign-in.
+
+    Designed for use during Phase 0 baseline assessment and ongoing program
+    tracking throughout the Passwordless Authentication Modernization program.
+.PARAMETER ExportPath
+    Directory to write the CSV export to. Defaults to the current directory.
+.PARAMETER DepartmentFilter
+    Optional department name to scope the audit to a single department.
+.PARAMETER GapReportOnly
+    Switch. When set, outputs only the gap report (accounts with no
+    phishing-resistant method registered) rather than the full coverage summary.
+.OUTPUTS
+    - Console summary with coverage percentages
+    - CSV export: PasswordlessReadiness_[timestamp].csv
+    - Gap report: accounts with no phishing-resistant method registered
+.EXAMPLE
+    .\Get-PasswordlessReadiness.ps1
+.EXAMPLE
+    .\Get-PasswordlessReadiness.ps1 -ExportPath "C:\Reports"
+.EXAMPLE
+    .\Get-PasswordlessReadiness.ps1 -DepartmentFilter "Branch Operations"
+.NOTES
+    Version: 1.0 | Date: June 2026
+    Prerequisites: Microsoft Graph PowerShell SDK
+    Permissions required:
+        UserAuthenticationMethod.Read.All
+        User.Read.All
+        Reports.Read.All
+#>
 
 [CmdletBinding()]
 param(

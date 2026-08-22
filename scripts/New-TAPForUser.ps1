@@ -1,30 +1,35 @@
-# =============================================================================
-# New-TAPForUser.ps1
-# NorthBridge Financial Group - IAM Architecture Team
-# Version: 1.0 | Date: June 2026
-# =============================================================================
-#
-# DESCRIPTION:
-#   Generates a compliant Temporary Access Pass (TAP) for a specified user
-#   in Microsoft Entra ID. Enforces NorthBridge TAP policy controls:
-#     - Single-use only
-#     - Maximum 4-hour lifetime
-#     - Requires valid ServiceNow ticket number for audit trail
-#     - Logs all issuance events to local audit log
-#     - Blocks issuance if user already has an active TAP
-#
-# AUTHORIZED USERS: Help Desk Tier 2 and above only
-#
-# PREREQUISITES:
-#   - Microsoft Graph PowerShell SDK
-#   - Permissions: UserAuthenticationMethod.ReadWrite.All, User.Read.All
-#
-# USAGE:
-#   .\New-TAPForUser.ps1 -UserPrincipalName "jane.smith@northbridge.example" -TicketNumber "INC0042891"
-#   .\New-TAPForUser.ps1 -UserPrincipalName "john.doe@northbridge.example" -TicketNumber "INC0042901" -LifetimeMinutes 120
-#
-# POLICY REFERENCE: NorthBridge TAP Policy - target-state-architecture.md Section 7
-# =============================================================================
+<#
+.SYNOPSIS
+    New-TAPForUser.ps1 — NorthBridge Financial Group IAM Architecture Team
+.DESCRIPTION
+    Generates a compliant Temporary Access Pass (TAP) for a specified user
+    in Microsoft Entra ID. Enforces NorthBridge TAP policy controls:
+      - Single-use only
+      - Maximum 4-hour lifetime
+      - Requires valid ServiceNow ticket number for audit trail
+      - Logs all issuance events to local audit log
+      - Blocks issuance if user already has an active TAP
+
+    AUTHORIZED USERS: Help Desk Tier 2 and above only.
+    POLICY REFERENCE: NorthBridge TAP Policy — target-state-architecture.md Section 7
+.PARAMETER UserPrincipalName
+    The UPN of the user to issue a Temporary Access Pass for. Mandatory.
+.PARAMETER TicketNumber
+    The ServiceNow incident ticket number authorizing this action, in the
+    format INC followed by 7 digits (e.g. INC0042891). Mandatory.
+.PARAMETER LifetimeMinutes
+    TAP lifetime in minutes. Must be between 60 and 240 (4 hours max). Defaults to 240.
+.PARAMETER AuditLogPath
+    Directory to write the local audit log CSV to. Defaults to the current directory.
+.EXAMPLE
+    .\New-TAPForUser.ps1 -UserPrincipalName "jane.smith@northbridge.example" -TicketNumber "INC0042891"
+.EXAMPLE
+    .\New-TAPForUser.ps1 -UserPrincipalName "john.doe@northbridge.example" -TicketNumber "INC0042901" -LifetimeMinutes 120
+.NOTES
+    Version: 1.0 | Date: June 2026
+    Prerequisites: Microsoft Graph PowerShell SDK
+    Permissions: UserAuthenticationMethod.ReadWrite.All, User.Read.All
+#>
 
 [CmdletBinding()]
 param(
