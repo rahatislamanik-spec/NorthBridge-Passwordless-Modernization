@@ -1,0 +1,7 @@
+# Language stats: HTML in this repo is documentation and portfolio
+# presentation, not application code. Exclude it from GitHub Linguist
+# language statistics so the bar reflects the PowerShell automation work.
+
+00-project-overview/northbridge-passwordless-architecture.html linguist-documentation
+00-project-overview/northbridge-authentication-flow.html linguist-documentation
+index.html linguist-documentation
