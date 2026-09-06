@@ -4,8 +4,13 @@
 .DESCRIPTION
     Audits all licensed Entra ID users for passwordless and phishing-resistant
     authentication method registration status. Identifies gaps in coverage
-    across Windows Hello for Business, FIDO2 security keys, and Microsoft
-    Authenticator passwordless phone sign-in.
+    across Windows Hello for Business and FIDO2 security keys.
+
+    Microsoft Authenticator is counted as MFA (not phishing-resistant): the
+    Graph authentication-methods API does not reliably expose whether a given
+    Authenticator registration is enabled for passwordless phone sign-in, so
+    this audit does not classify it as passwordless. This keeps the reported
+    phishing-resistant coverage number conservative and never overstated.
 
     Designed for use during Phase 0 baseline assessment and ongoing program
     tracking throughout the Passwordless Authentication Modernization program.
@@ -27,13 +32,14 @@
 .EXAMPLE
     .\Get-PasswordlessReadiness.ps1 -DepartmentFilter "Branch Operations"
 .NOTES
-    Version: 1.0 | Date: June 2026
+    Version: 1.1 | Date: June 2026
     Prerequisites: Microsoft Graph PowerShell SDK
     Permissions required:
         UserAuthenticationMethod.Read.All
         User.Read.All
-        Reports.Read.All
 #>
+
+#Requires -Modules Microsoft.Graph.Authentication, Microsoft.Graph.Users, Microsoft.Graph.Identity.SignIns
 
 [CmdletBinding()]
 param(
@@ -51,7 +57,7 @@ param(
 # CONFIGURATION
 # =============================================================================
 
-$ScriptVersion  = "1.0"
+$ScriptVersion  = "1.1"
 $ScriptName     = "Get-PasswordlessReadiness"
 $Organization   = "NorthBridge Financial Group"
 $Timestamp      = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -85,8 +91,7 @@ function Connect-ToGraph {
 
     $RequiredScopes = @(
         "UserAuthenticationMethod.Read.All",
-        "User.Read.All",
-        "Reports.Read.All"
+        "User.Read.All"
     )
 
     try {
@@ -96,9 +101,8 @@ function Connect-ToGraph {
         Write-Host "[+] Signed in as: $($Context.Account)" -ForegroundColor Green
     }
     catch {
-        Write-Host "[-] Failed to connect to Microsoft Graph." -ForegroundColor Red
-        Write-Host "    Error: $($_.Exception.Message)" -ForegroundColor Red
-        exit 1
+        # Surface the failure to the caller instead of killing the host session.
+        throw "Failed to connect to Microsoft Graph: $($_.Exception.Message)"
     }
 }
 
@@ -126,9 +130,7 @@ function Get-AllUsers {
         return $Users
     }
     catch {
-        Write-Host "[-] Failed to retrieve users." -ForegroundColor Red
-        Write-Host "    Error: $($_.Exception.Message)" -ForegroundColor Red
-        exit 1
+        throw "Failed to retrieve users: $($_.Exception.Message)"
     }
 }
 
@@ -136,16 +138,15 @@ function Get-AuthMethodsForUser {
     param([string]$UserId)
 
     $Methods = @{
-        HasWindowsHelloForBusiness  = $false
-        HasFIDO2SecurityKey         = $false
-        HasAuthenticatorPasswordless = $false
-        HasPasswordlessMFA          = $false
-        HasPushMFA                  = $false
-        HasSoftwareOTP              = $false
-        HasSMSOTP                   = $false
-        HasPassword                 = $false
-        PhishingResistantCount      = 0
-        MethodList                  = @()
+        HasWindowsHelloForBusiness = $false
+        HasFIDO2SecurityKey        = $false
+        HasAuthenticator           = $false
+        HasPasswordlessMFA         = $false
+        HasSoftwareOTP             = $false
+        HasSMSOTP                  = $false
+        HasPassword                = $false
+        PhishingResistantCount     = 0
+        MethodList                 = @()
     }
 
     try {
@@ -166,19 +167,16 @@ function Get-AuthMethodsForUser {
                     $Methods.MethodList += "FIDO2SecurityKey"
                 }
                 "#microsoft.graph.microsoftAuthenticatorAuthenticationMethod" {
-                    $AuthenticatorMethod = Get-MgUserAuthenticationMicrosoftAuthenticatorMethod `
-                        -UserId $UserId -MicrosoftAuthenticatorAuthenticationMethodId $Method.Id `
-                        -ErrorAction SilentlyContinue
-
-                    if ($AuthenticatorMethod.AuthenticatorAppVersion -and
-                        $AuthenticatorMethod.AdditionalProperties["phoneAppVersion"]) {
-                        $Methods.HasAuthenticatorPasswordless = $true
-                        $Methods.PhishingResistantCount++
-                        $Methods.MethodList += "AuthenticatorPasswordless"
-                    } else {
-                        $Methods.HasPushMFA = $true
-                        $Methods.MethodList += "AuthenticatorPush"
-                    }
+                    # NOTE: The Graph authentication-methods API does not reliably
+                    # expose whether a given Authenticator registration is enabled
+                    # for passwordless phone sign-in vs. push-only. Rather than
+                    # infer it from properties Graph does not populate, this audit
+                    # counts Authenticator as MFA (not phishing-resistant) so the
+                    # coverage number is never overstated. Per-user passwordless
+                    # capability for Authenticator would require the Entra
+                    # authentication-method registration report (Reports.Read.All).
+                    $Methods.HasAuthenticator = $true
+                    $Methods.MethodList += "Authenticator"
                 }
                 "#microsoft.graph.softwareOathAuthenticationMethod" {
                     $Methods.HasSoftwareOTP = $true
@@ -195,10 +193,11 @@ function Get-AuthMethodsForUser {
             }
         }
 
+        # Phishing-resistant coverage counts only methods that can be verified
+        # reliably per-user via the authentication-methods API.
         $Methods.HasPasswordlessMFA = (
             $Methods.HasWindowsHelloForBusiness -or
-            $Methods.HasFIDO2SecurityKey -or
-            $Methods.HasAuthenticatorPasswordless
+            $Methods.HasFIDO2SecurityKey
         )
     }
     catch {
@@ -212,46 +211,44 @@ function Build-UserRecord {
     param($User, $Methods)
 
     return [PSCustomObject]@{
-        DisplayName                  = $User.DisplayName
-        UserPrincipalName            = $User.UserPrincipalName
-        Department                   = $User.Department
-        JobTitle                     = $User.JobTitle
-        AccountEnabled               = $User.AccountEnabled
-        HasPassword                  = $Methods.HasPassword
-        HasWindowsHelloForBusiness   = $Methods.HasWindowsHelloForBusiness
-        HasFIDO2SecurityKey          = $Methods.HasFIDO2SecurityKey
-        HasAuthenticatorPasswordless = $Methods.HasAuthenticatorPasswordless
-        HasAnyPasswordlessMethod     = $Methods.HasPasswordlessMFA
-        HasPushMFA                   = $Methods.HasPushMFA
-        HasSoftwareOTP               = $Methods.HasSoftwareOTP
-        HasSMSOTP                    = $Methods.HasSMSOTP
-        PhishingResistantCount       = $Methods.PhishingResistantCount
-        AuthMethodList               = ($Methods.MethodList -join " | ")
-        RiskLevel                    = if ($Methods.HasPasswordlessMFA) { "Low" }
-                                       elseif ($Methods.HasPushMFA) { "Medium" }
-                                       elseif ($Methods.HasSMSOTP -or $Methods.HasSoftwareOTP) { "High" }
-                                       else { "Critical" }
-        RecommendedAction            = if ($Methods.HasPasswordlessMFA) { "None — phishing-resistant method registered" }
-                                       elseif (-not $Methods.HasPushMFA -and -not $Methods.HasSMSOTP) { "URGENT: Enroll in MFA immediately" }
-                                       elseif ($Methods.HasWindowsHelloForBusiness -eq $false -and $Methods.HasFIDO2SecurityKey -eq $false) { "Register WHfB or FIDO2 key" }
-                                       else { "Upgrade to phishing-resistant method" }
+        DisplayName                = $User.DisplayName
+        UserPrincipalName          = $User.UserPrincipalName
+        Department                 = $User.Department
+        JobTitle                   = $User.JobTitle
+        AccountEnabled             = $User.AccountEnabled
+        HasPassword                = $Methods.HasPassword
+        HasWindowsHelloForBusiness = $Methods.HasWindowsHelloForBusiness
+        HasFIDO2SecurityKey        = $Methods.HasFIDO2SecurityKey
+        HasAuthenticator           = $Methods.HasAuthenticator
+        HasAnyPasswordlessMethod   = $Methods.HasPasswordlessMFA
+        HasSoftwareOTP             = $Methods.HasSoftwareOTP
+        HasSMSOTP                  = $Methods.HasSMSOTP
+        PhishingResistantCount     = $Methods.PhishingResistantCount
+        AuthMethodList             = ($Methods.MethodList -join " | ")
+        RiskLevel                  = if ($Methods.HasPasswordlessMFA) { "Low" }
+                                     elseif ($Methods.HasAuthenticator) { "Medium" }
+                                     elseif ($Methods.HasSMSOTP -or $Methods.HasSoftwareOTP) { "High" }
+                                     else { "Critical" }
+        RecommendedAction          = if ($Methods.HasPasswordlessMFA) { "None — phishing-resistant method registered" }
+                                     elseif (-not $Methods.HasAuthenticator -and -not $Methods.HasSMSOTP -and -not $Methods.HasSoftwareOTP) { "URGENT: Enroll in MFA immediately" }
+                                     elseif ($Methods.HasAuthenticator) { "Upgrade to phishing-resistant method (WHfB or FIDO2)" }
+                                     else { "Register WHfB or FIDO2 key" }
     }
 }
 
 function Write-ConsoleSummary {
     param([array]$Results)
 
-    $Total                  = $Results.Count
-    $PasswordlessCount      = ($Results | Where-Object { $_.HasAnyPasswordlessMethod }).Count
-    $WHfBCount              = ($Results | Where-Object { $_.HasWindowsHelloForBusiness }).Count
-    $FIDO2Count             = ($Results | Where-Object { $_.HasFIDO2SecurityKey }).Count
-    $AuthenticatorPLCount   = ($Results | Where-Object { $_.HasAuthenticatorPasswordless }).Count
-    $PushMFAOnly            = ($Results | Where-Object { -not $_.HasAnyPasswordlessMethod -and $_.HasPushMFA }).Count
-    $SMSOTPOnly             = ($Results | Where-Object { -not $_.HasAnyPasswordlessMethod -and -not $_.HasPushMFA -and ($_.HasSMSOTP -or $_.HasSoftwareOTP) }).Count
-    $NoMFA                  = ($Results | Where-Object { $_.RiskLevel -eq "Critical" }).Count
+    $Total                = $Results.Count
+    $PasswordlessCount    = ($Results | Where-Object { $_.HasAnyPasswordlessMethod }).Count
+    $WHfBCount            = ($Results | Where-Object { $_.HasWindowsHelloForBusiness }).Count
+    $FIDO2Count           = ($Results | Where-Object { $_.HasFIDO2SecurityKey }).Count
+    $AuthenticatorCount   = ($Results | Where-Object { -not $_.HasAnyPasswordlessMethod -and $_.HasAuthenticator }).Count
+    $SMSOTPOnly           = ($Results | Where-Object { -not $_.HasAnyPasswordlessMethod -and -not $_.HasAuthenticator -and ($_.HasSMSOTP -or $_.HasSoftwareOTP) }).Count
+    $NoMFA                = ($Results | Where-Object { $_.RiskLevel -eq "Critical" }).Count
 
-    $PasswordlessPct        = [math]::Round(($PasswordlessCount / $Total) * 100, 1)
-    $NoMFAPct               = [math]::Round(($NoMFA / $Total) * 100, 1)
+    $PasswordlessPct      = if ($Total -gt 0) { [math]::Round(($PasswordlessCount / $Total) * 100, 1) } else { 0 }
+    $NoMFAPct             = if ($Total -gt 0) { [math]::Round(($NoMFA / $Total) * 100, 1) } else { 0 }
 
     Write-SectionHeader "READINESS SUMMARY"
 
@@ -261,12 +258,14 @@ function Write-ConsoleSummary {
     Write-Host "  Any passwordless method:          $PasswordlessCount ($PasswordlessPct%)" -ForegroundColor $(if ($PasswordlessPct -ge 80) { "Green" } elseif ($PasswordlessPct -ge 40) { "Yellow" } else { "Red" })
     Write-Host "    Windows Hello for Business:     $WHfBCount" -ForegroundColor White
     Write-Host "    FIDO2 Security Key:             $FIDO2Count" -ForegroundColor White
-    Write-Host "    Authenticator Passwordless:     $AuthenticatorPLCount" -ForegroundColor White
     Write-Host ""
     Write-Host "  RISK BREAKDOWN" -ForegroundColor Cyan
-    Write-Host "  Push MFA only (no passwordless):  $PushMFAOnly" -ForegroundColor Yellow
+    Write-Host "  Authenticator/MFA only:           $AuthenticatorCount" -ForegroundColor Yellow
     Write-Host "  SMS/TOTP only:                    $SMSOTPOnly" -ForegroundColor DarkYellow
     Write-Host "  No MFA at all (CRITICAL):         $NoMFA ($NoMFAPct%)" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "  Note: Microsoft Authenticator is counted as MFA, not as a" -ForegroundColor DarkGray
+    Write-Host "  phishing-resistant/passwordless method. See script header." -ForegroundColor DarkGray
     Write-Host ""
 
     if ($NoMFA -gt 0) {
@@ -289,60 +288,76 @@ function Write-ConsoleSummary {
 # MAIN EXECUTION
 # =============================================================================
 
-Write-Banner
-Connect-ToGraph
+try {
+    Write-Banner
+    Connect-ToGraph
 
-Write-SectionHeader "USER RETRIEVAL"
-$Users = Get-AllUsers -Department $DepartmentFilter
+    Write-SectionHeader "USER RETRIEVAL"
+    $Users = Get-AllUsers -Department $DepartmentFilter
 
-$Results    = [System.Collections.Generic.List[PSCustomObject]]::new()
-$Counter    = 0
-$TotalUsers = $Users.Count
-
-Write-SectionHeader "AUTHENTICATION METHOD AUDIT"
-Write-Host "[*] Auditing authentication methods for $TotalUsers accounts..." -ForegroundColor Cyan
-Write-Host "[*] This may take several minutes for large tenants." -ForegroundColor Cyan
-Write-Host ""
-
-foreach ($User in $Users) {
-    $Counter++
-
-    if ($Counter % 50 -eq 0 -or $Counter -eq $TotalUsers) {
-        $Percent = [math]::Round(($Counter / $TotalUsers) * 100)
-        Write-Progress -Activity "Auditing authentication methods" `
-            -Status "$Counter of $TotalUsers users ($Percent%)" `
-            -PercentComplete $Percent
+    if ($Users.Count -eq 0) {
+        Write-Host "[!] No matching users found. Nothing to audit." -ForegroundColor Yellow
+        Disconnect-MgGraph -ErrorAction SilentlyContinue
+        return
     }
 
-    $Methods = Get-AuthMethodsForUser -UserId $User.Id
-    $Record  = Build-UserRecord -User $User -Methods $Methods
-    $Results.Add($Record)
+    $Results    = [System.Collections.Generic.List[PSCustomObject]]::new()
+    $Counter    = 0
+    $TotalUsers = $Users.Count
+
+    Write-SectionHeader "AUTHENTICATION METHOD AUDIT"
+    Write-Host "[*] Auditing authentication methods for $TotalUsers accounts..." -ForegroundColor Cyan
+    Write-Host "[*] This may take several minutes for large tenants." -ForegroundColor Cyan
+    Write-Host "[*] Note: this audit makes one Graph call per user; on very large" -ForegroundColor Cyan
+    Write-Host "    tenants expect throttling. A registration-report approach would" -ForegroundColor Cyan
+    Write-Host "    scale better and is noted as a future enhancement." -ForegroundColor Cyan
+    Write-Host ""
+
+    foreach ($User in $Users) {
+        $Counter++
+
+        if ($Counter % 50 -eq 0 -or $Counter -eq $TotalUsers) {
+            $Percent = [math]::Round(($Counter / $TotalUsers) * 100)
+            Write-Progress -Activity "Auditing authentication methods" `
+                -Status "$Counter of $TotalUsers users ($Percent%)" `
+                -PercentComplete $Percent
+        }
+
+        $Methods = Get-AuthMethodsForUser -UserId $User.Id
+        $Record  = Build-UserRecord -User $User -Methods $Methods
+        $Results.Add($Record)
+    }
+
+    Write-Progress -Activity "Auditing authentication methods" -Completed
+
+    # Console summary
+    Write-ConsoleSummary -Results $Results
+
+    # Export full report
+    Write-SectionHeader "EXPORT"
+
+    if (-not $GapReportOnly) {
+        $Results | Export-Csv -Path $ExportFile -NoTypeInformation -Encoding UTF8
+        Write-Host "[+] Full report exported: $ExportFile" -ForegroundColor Green
+    }
+
+    # Export gap report — accounts with no phishing-resistant method
+    $GapAccounts = $Results | Where-Object { -not $_.HasAnyPasswordlessMethod }
+    if ($GapAccounts.Count -gt 0) {
+        $GapAccounts | Export-Csv -Path $GapReportFile -NoTypeInformation -Encoding UTF8
+        Write-Host "[+] Gap report exported:  $GapReportFile" -ForegroundColor Green
+        Write-Host "    Accounts in gap report: $($GapAccounts.Count)" -ForegroundColor Yellow
+    }
+
+    Write-SectionHeader "AUDIT COMPLETE"
+    Write-Host "[+] $ScriptName v$ScriptVersion completed at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Green
+    Write-Host "[+] Tenant: $((Get-MgContext).TenantId)" -ForegroundColor Green
+    Write-Host ""
 }
-
-Write-Progress -Activity "Auditing authentication methods" -Completed
-
-# Console summary
-Write-ConsoleSummary -Results $Results
-
-# Export full report
-Write-SectionHeader "EXPORT"
-
-if (-not $GapReportOnly) {
-    $Results | Export-Csv -Path $ExportFile -NoTypeInformation -Encoding UTF8
-    Write-Host "[+] Full report exported: $ExportFile" -ForegroundColor Green
+catch {
+    Write-Host "[-] Audit failed: $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
 }
-
-# Export gap report — accounts with no phishing-resistant method
-$GapAccounts = $Results | Where-Object { -not $_.HasAnyPasswordlessMethod }
-if ($GapAccounts.Count -gt 0) {
-    $GapAccounts | Export-Csv -Path $GapReportFile -NoTypeInformation -Encoding UTF8
-    Write-Host "[+] Gap report exported:  $GapReportFile" -ForegroundColor Green
-    Write-Host "    Accounts in gap report: $($GapAccounts.Count)" -ForegroundColor Yellow
+finally {
+    Disconnect-MgGraph -ErrorAction SilentlyContinue
 }
-
-Write-SectionHeader "AUDIT COMPLETE"
-Write-Host "[+] $ScriptName v$ScriptVersion completed at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Green
-Write-Host "[+] Tenant: $((Get-MgContext).TenantId)" -ForegroundColor Green
-Write-Host ""
-
-Disconnect-MgGraph -ErrorAction SilentlyContinue
