@@ -326,16 +326,15 @@
 
   <div class="eyebrow">NorthBridge Financial Group · Identity &amp; Access Management</div>
   <h1>Passwordless Authentication Modernization</h1>
-    <p style="margin-top:10px; font-size:0.85rem; background:rgba(255,255,255,0.15); display:inline-block; padding:4px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.3); color:rgba(255,255,255,0.9);">✅ Portfolio Complete — v1.0  |  Passwordless Auth · Entra ID · FIDO2</p>
+    <p style="margin-top:10px; font-size:0.85rem; background:rgba(255,255,255,0.15); display:inline-block; padding:4px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.3); color:rgba(255,255,255,0.9);">Version 1 — Architecture &amp; Lab Evidence Case Study  |  Passwordless Auth · Entra ID · FIDO2</p>
   <p class="subtitle">
-    A release-candidate architecture and rollout planning case study for moving a 40,000-employee
+    A phased architecture and rollout-planning case study for moving a 40,000-employee
     fictional Canadian financial institution from password-based sign-in toward phishing-resistant,
     passwordless authentication across corporate Windows devices, branch terminals, and remote workers.
   </p>
 
   <div class="badge-row">
-    <span class="badge badge-status">Status: Evidence Update Pending</span>
-    <span class="badge">Microsoft Entra ID</span>
+    <span class="badge badge-status">Microsoft Entra ID</span>
     <span class="badge">Windows Hello for Business</span>
     <span class="badge">FIDO2</span>
     <span class="badge">Conditional Access</span>
@@ -349,18 +348,18 @@
 
   <h2>The Business Case</h2>
   <p>
-    Following a simulated password-spray incident that compromised 14 branch accounts in Q3 2024,
-    NorthBridge's Identity &amp; Access Management team initiated a phased passwordless authentication
-    modernization program under the direction of the Chief Information Security Officer.
+    Following a simulated password-spray incident, NorthBridge's Identity &amp; Access Management team
+    initiated a phased passwordless authentication modernization program under the direction of the
+    Chief Information Security Officer.
   </p>
 
   <table>
     <tr><th>Driver</th><th>Detail</th></tr>
     <tr><td>Regulatory pressure</td><td>OSFI B-13 Technology and Cyber Risk Guideline requires phishing-resistant MFA for privileged and high-risk access</td></tr>
-    <tr><td>Incident response</td><td>Q3 2024 password-spray attack — 14 accounts compromised, 6-hour containment, $340K estimated response cost</td></tr>
+    <tr><td>Incident response</td><td>Simulated password-spray attack used to frame the business case — account compromise, containment effort, and response cost modelled as a scenario</td></tr>
     <tr><td>Zero Trust alignment</td><td>NorthBridge Zero Trust roadmap requires device-bound, phishing-resistant credentials by Q4 2025</td></tr>
-    <tr><td>User experience</td><td>2,200 help desk tickets per quarter are password-related (resets, lockouts, expired credentials)</td></tr>
-    <tr><td>Operational cost</td><td>Password reset tickets cost an estimated $18-$22 per ticket — $40K-$48K per quarter in support overhead</td></tr>
+    <tr><td>User experience</td><td>Password-related tickets (resets, lockouts, expired credentials) are a large share of help desk volume</td></tr>
+    <tr><td>Operational cost</td><td>Password reset handling is a recurring, quantifiable support cost — a standard driver for passwordless business cases</td></tr>
   </table>
 
   <h2>Enterprise Passwordless Architecture</h2>
@@ -558,7 +557,7 @@
   <p>
     Sanitized screenshots from a lab or simulated enterprise Microsoft Entra ID environment.
     Sensitive tenant labels, account identifiers, and session details are redacted. These
-    demonstrate configuration concepts and validation points — not proof of completed production deployment.
+    demonstrate configuration concepts and validation points.
   </p>
 
   <div class="gallery">
@@ -591,13 +590,14 @@
   <h2>Companion Project — AD Identity Operations Toolkit</h2>
   <div class="companion-card">
     <p>
-      The PowerShell scripts used for passwordless readiness assessment in this project
-      (<code>Get-PasswordlessReadiness.ps1</code>, <code>New-TAPForUser.ps1</code>) are part of
-      <strong>Phase 10</strong> of the AD Identity Operations Toolkit.
+      The PowerShell automation for passwordless readiness and TAP issuance
+      (<code>Get-PasswordlessReadiness.ps1</code>, <code>New-TAPForUser.ps1</code>) lives in this
+      repository, under <code>scripts/</code>.
     </p>
     <p style="margin-top: 0.5rem;">
-      This repo covers enterprise architecture and deployment governance. The AD Toolkit covers
-      the PowerShell assessment layer. Same NorthBridge Financial Group scenario — complementary, not duplicate.
+      This repo covers the passwordless architecture, rollout governance, and its automation. The
+      AD Identity Operations Toolkit covers the on-premises AD identity foundation. Same NorthBridge
+      scenario — complementary, not duplicate.
     </p>
     <a href="https://github.com/rahatislamanik-spec/AD-Identity-Operations-Toolkit">View AD-Identity-Operations-Toolkit →</a>
   </div>
