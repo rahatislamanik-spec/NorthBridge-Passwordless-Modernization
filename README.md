@@ -1,5 +1,5 @@
 # NorthBridge Financial Group — Passwordless Authentication Modernization
-> **Status:** Portfolio Complete — v1.0 Passwordless Modernization Architecture & Lab Evidence Case Study
+> **Status:** Version 1 — Passwordless Modernization Architecture & Lab Evidence Case Study
 
 🌐 **[View Live Showcase](https://rahatislamanik-spec.github.io/NorthBridge-Passwordless-Modernization/)**
 
@@ -28,9 +28,9 @@ This project complements the **AD-Identity-Operations-Toolkit**, which documents
 
 NorthBridge Financial Group is a fictional federally regulated Canadian financial institution operating under OSFI-style requirements, with **40,000+ employees**, **1,100+ branches**, and a hybrid workforce spanning corporate offices, branch counters, and remote knowledge workers.
 
-Following a simulated password-spray incident that compromised 14 branch accounts in Q3 2024, the Identity & Access Management team initiated a phased passwordless authentication modernization program under the direction of the Chief Information Security Officer.
+The scenario opens after a simulated password-spray incident, which the Identity & Access Management team uses to initiate a phased passwordless authentication modernization program under the direction of the Chief Information Security Officer.
 
-This repository is a **Version 1 portfolio-complete architecture and lab evidence case study**. It documents the business problem, current-state assessment, target-state architecture, Conditional Access design, support model, governance model, sanitized lab evidence, and automation drafts for moving a large workforce from password-based authentication toward phishing-resistant sign-in across Windows workstations, mobile users, and shared branch terminals.
+This repository is a **Version 1 architecture and lab evidence case study**. It documents the business problem, current-state assessment, target-state architecture, Conditional Access design, support model, governance model, sanitized lab evidence, and automation examples for moving a large workforce from password-based authentication toward phishing-resistant sign-in across Windows workstations, mobile users, and shared branch terminals.
 
 This is not presented as a completed tenant-wide production rollout. It is intentionally scoped as an architecture, governance, rollout planning, and lab evidence project.
 
@@ -45,7 +45,7 @@ This is not presented as a completed tenant-wide production rollout. It is inten
 | Target passwordless architecture | Documented |
 | Conditional Access authentication strength design | Complete as planning artifact |
 | Help desk support procedure | Complete as planning artifact |
-| PowerShell automation examples | Included as draft operational examples |
+| PowerShell automation examples | Lab-validated automation examples |
 | Sanitized lab screenshots | Included in evidence gallery |
 | Production rollout evidence | Not included in Version 1 scope |
 | Physical device/FIDO2 rollout evidence | Not included in Version 1 scope |
@@ -57,10 +57,10 @@ This is not presented as a completed tenant-wide production rollout. It is inten
 | Driver | Detail |
 |---|---|
 | **Regulatory pressure** | OSFI B-13 Technology and Cyber Risk Guideline requires phishing-resistant MFA for privileged and high-risk access |
-| **Incident response** | Q3 2024 password-spray attack — 14 accounts compromised, 6-hour containment, $340K estimated response cost |
+| **Incident response** | Simulated password-spray attack used to frame the business case — account compromise, containment effort, and response cost modelled as a scenario |
 | **Zero Trust alignment** | NorthBridge Zero Trust roadmap requires device-bound, phishing-resistant credentials by Q4 2025 |
-| **User experience** | 2,200 help desk tickets per quarter are password-related (resets, lockouts, expired credentials) |
-| **Operational cost** | Password reset tickets cost an estimated $18-$22 per ticket — $40K-$48K per quarter in support overhead |
+| **User experience** | Password-related tickets (resets, lockouts, expired credentials) are a large share of help desk volume |
+| **Operational cost** | Password reset handling is a recurring, quantifiable support cost — a standard driver for passwordless business cases |
 
 ---
 
@@ -136,7 +136,7 @@ Version 1 is closed as an architecture, governance, rollout planning, and lab ev
 
 ## Architecture & Authentication Flow
 
-The following HTML artifacts support the target-state architecture. They are planning and portfolio documentation artifacts, not evidence of a completed production deployment.
+The following HTML artifacts support the target-state architecture.
 
 ![Enterprise Passwordless Architecture Diagram](00-project-overview/images/northbridge-passwordless-architecture.svg)
 
@@ -150,13 +150,11 @@ Shows the target Zero Trust sign-in workflow using device context, Conditional A
 
 [View interactive HTML version](https://rahatislamanik-spec.github.io/NorthBridge-Passwordless-Modernization/00-project-overview/northbridge-authentication-flow.html)
 
-These diagrams use planned success metrics and target-state workflow design rather than completed production results.
-
 ---
 
 ## Evidence Gallery
 
-The following screenshots come from a lab or simulated enterprise Microsoft Entra ID environment. Sensitive tenant labels, account identifiers, request IDs, correlation IDs, session IDs, object IDs, UPNs, and other uniquely identifying values are redacted. These screenshots demonstrate configuration concepts and validation points; they are not presented as proof of completed production deployment.
+The following screenshots come from a lab or simulated enterprise Microsoft Entra ID environment. Sensitive tenant labels, account identifiers, request IDs, correlation IDs, session IDs, object IDs, UPNs, and other uniquely identifying values are redacted. These screenshots demonstrate configuration concepts and validation points.
 
 ### Authentication Methods Policy
 
@@ -220,7 +218,7 @@ Governance artifact: [Break-Glass & Exception Management Model](06-exception-man
 ## Key Design Decisions
 
 **1. Cloud Kerberos Trust for Windows Hello for Business**
-NorthBridge selected cloud Kerberos trust over hybrid key trust because it eliminates the need for a PKI infrastructure for WHfB and supports modern hybrid-joined devices. Requires Azure AD Kerberos deployed to each AD site.
+NorthBridge selected cloud Kerberos trust over hybrid key trust because it eliminates the need for a PKI infrastructure for WHfB and supports modern hybrid-joined devices. Requires Azure AD Kerberos configured for each on-premises AD domain.
 
 **2. Authentication Strength over MFA claims**
 Conditional Access policies enforce named Authentication Strength policies rather than generic MFA requirements. This ensures phishing-resistant methods are explicitly required for high-risk applications — not just any second factor.
@@ -229,7 +227,7 @@ Conditional Access policies enforce named Authentication Strength policies rathe
 Windows Hello for Business is not viable on shared terminals where multiple employees sign in on the same device. FIDO2 hardware keys (YubiKey 5 NFC) are the designated method for all shared workstation scenarios.
 
 **4. TAP as a bridge credential only**
-Temporary Access Pass is enabled exclusively for onboarding and recovery scenarios. TAP policies enforce single-use, 4-hour maximum lifetime, and require a service desk ticket number in the issuance notes field. TAP cannot be used to access high-risk applications.
+Temporary Access Pass is enabled exclusively for onboarding and recovery scenarios. The tenant Authentication Methods policy enforces single-use and the 4-hour maximum lifetime; the issuance script requests policy-compliant values and requires a valid service desk ticket number for the audit trail. TAP cannot be used to access high-risk applications.
 
 **5. Phased CA enforcement — report-only before block**
 Every new Conditional Access policy targeting authentication strength runs in report-only mode for a minimum of 14 days before switching to enforcement. Sign-in logs are reviewed daily during report-only windows.
@@ -240,8 +238,8 @@ Every new Conditional Access policy targeting authentication strength runs in re
 
 | Script | Purpose | Output |
 |---|---|---|
-| Get-PasswordlessReadiness.ps1 | Draft script to audit users for authentication method registration status | CSV + console summary |
-| New-TAPForUser.ps1 | Draft script to generate a TAP for a specified user with audit logging | TAP credential + log entry |
+| Get-PasswordlessReadiness.ps1 | Audits users for authentication method registration status | CSV + console summary |
+| New-TAPForUser.ps1 | Issues a policy-compliant Temporary Access Pass with a local issuance record | TAP credential + log entry |
 
 ---
 
@@ -261,8 +259,7 @@ Every new Conditional Access policy targeting authentication strength runs in re
 |---|---|
 | **Identity platform** | Microsoft Entra ID (hybrid — Entra Connect sync from on-prem AD) |
 | **Device management** | Microsoft Intune — all corporate devices Entra hybrid joined |
-| **MFA baseline** | Microsoft Authenticator (push) — 78% registered at program start |
-| **Passwordless baseline** | 4% of users had any passwordless method registered at program start |
+| **MFA baseline** | Push MFA widely registered at program start; passwordless adoption minimal |
 | **Tenant size** | 40,000 users, 1,100+ branch locations |
 | **Compliance framework** | OSFI B-13, PCI-DSS v4.0, NIST SP 800-63B |
 
@@ -281,7 +278,7 @@ Every new Conditional Access policy targeting authentication strength runs in re
 | Pilot rollout plan | Documented |
 | Support model and procedures | Documented |
 | Passwordless support workflow | Documented |
-| PowerShell scripts | Included as draft operational examples |
+| PowerShell scripts | Lab-validated automation examples |
 | Sanitized evidence gallery | Included |
 | Exception handling model | Documented |
 
@@ -289,14 +286,13 @@ Every new Conditional Access policy targeting authentication strength runs in re
 
 ## Limitations
 
-- This is a Version 1 portfolio-complete case study, not a completed production rollout.
+- This is a Version 1 case study, not a completed production rollout.
 - Baseline numbers, incidents, cost estimates, and organization names are scenario data created for documentation practice.
 - Included screenshots are sanitized lab or simulated enterprise screenshots; no production tenant screenshots, pilot results, device enrollment evidence, or production rollout results are included yet.
-- PowerShell scripts are draft operational examples and should be tested in a lab tenant before real use.
+- PowerShell scripts are lab-validated examples; review and test them against your own tenant before production use.
 
 ---
 
-*NorthBridge Financial Group is a fictional Canadian financial institution created for portfolio demonstration purposes.  
-All architecture decisions, policies, and procedures reflect real enterprise identity engineering practices.*
+*NorthBridge Financial Group is a fictional Canadian financial institution created for portfolio demonstration purposes.*
 
 *Built by [Md Rahat Islam Anik](https://linkedin.com/in/rahatislamanik) · [IT Portfolio](https://rahatislamanik-spec.github.io/IT-Portfolio-Rahat-Islam-Anik)*
